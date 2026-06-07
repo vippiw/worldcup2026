@@ -61,24 +61,18 @@ input:focus { border-color: #1a1a1a; }
       <h1 style="font-size: 24px; font-weight: 700; margin-bottom: 4px;">ทายผลบอลโลก 2026</h1>
       <p style="font-size: 13px; color: #888;">FIFA World Cup • June–July 2026</p>
     </div>
-
-    <!-- TAB LOGIN/REGISTER -->
     <div class="tab-bar" style="margin-bottom: 12px;">
       <button class="tab active" id="tab-login-btn" onclick="switchAuthTab('login')">เข้าสู่ระบบ</button>
       <button class="tab" id="tab-register-btn" onclick="switchAuthTab('register')">สมัครสมาชิก</button>
     </div>
-
-    <!-- LOGIN FORM -->
     <div id="form-login" class="card">
       <div class="label">Username</div>
       <input type="text" id="login-username" placeholder="กรอก Username..." />
       <div class="label">รหัสผ่าน</div>
       <input type="password" id="login-password" placeholder="กรอกรหัสผ่าน..." />
-      <button class="btn primary" onclick="doLogin()">เข้าสู่ระบบ →</button>
+      <button class="btn primary" id="btn-login" onclick="doLogin()">เข้าสู่ระบบ →</button>
       <div id="login-err" class="err" style="display:none;"></div>
     </div>
-
-    <!-- REGISTER FORM -->
     <div id="form-register" class="card" style="display:none;">
       <div class="label">Username <span style="color:#888;font-weight:400;">(อย่างน้อย 3 ตัวอักษร)</span></div>
       <input type="text" id="reg-username" placeholder="ตั้ง Username..." />
@@ -86,10 +80,9 @@ input:focus { border-color: #1a1a1a; }
       <input type="password" id="reg-password" placeholder="ตั้งรหัสผ่าน..." />
       <div class="label">ชื่อที่แสดงในตาราง <span style="color:#888;font-weight:400;">(ห้ามซ้ำกับคนอื่น)</span></div>
       <input type="text" id="reg-displayname" placeholder="เช่น แมนติเนช, นก, พีท..." />
-      <button class="btn primary" onclick="doRegister()">สมัครสมาชิก →</button>
+      <button class="btn primary" id="btn-register" onclick="doRegister()">สมัครสมาชิก →</button>
       <div id="register-err" class="err" style="display:none;"></div>
     </div>
-
     <p style="font-size: 12px; color: #aaa; text-align: center; margin-top: 8px;">ทายผลบอลโลก 2026 ร่วมกับเพื่อนๆ ⚽</p>
   </div>
 </div>
@@ -99,7 +92,7 @@ input:focus { border-color: #1a1a1a; }
   <div class="container">
     <div class="nav">
       <span class="nav-title" id="main-greeting">สวัสดี ⚽</span>
-      <button class="btn sm" id="btn-admin" style="display:none" onclick="showScreen('admin')">⚙️ Admin</button>
+      <button class="btn sm" id="btn-admin" style="display:none" onclick="showScreen('admin'); renderAdminList();">⚙️ Admin</button>
       <button class="btn sm danger" onclick="doLogout()">ออก</button>
     </div>
     <div class="tab-bar">
@@ -107,7 +100,7 @@ input:focus { border-color: #1a1a1a; }
       <button class="tab" onclick="switchTab('picks', this)">ของฉัน</button>
       <button class="tab" onclick="switchTab('leaderboard', this)">ตาราง</button>
     </div>
-    <div id="tab-matches"><div class="spinner">กำลังโหลด...</div></div>
+    <div id="tab-matches"><div class="spinner">⏳ กำลังโหลด...</div></div>
     <div id="tab-picks" style="display:none"></div>
     <div id="tab-leaderboard" style="display:none"></div>
   </div>
@@ -133,7 +126,7 @@ input:focus { border-color: #1a1a1a; }
     </div>
     <div class="card">
       <div style="font-size: 15px; font-weight: 600; margin-bottom: 8px;">Import โปรแกรมบอลโลก 2026</div>
-      <p style="font-size: 13px; color: #888; margin-bottom: 12px;">Import ทั้งหมด 104 แมตช์ทีเดียว ปิดทายไว้ก่อน Admin เปิดเองได้ค่ะ</p>
+      <p style="font-size: 13px; color: #888; margin-bottom: 12px;">Import ทั้งหมด 104 แมตช์ทีเดียว ปิดทายไว้ก่อน ระบบเปิดอัตโนมัติ 48 ชั่วโมงก่อนแข่งค่ะ</p>
       <button class="btn primary" onclick="importAllMatches()" id="btn-import">⚽ Import 104 แมตช์</button>
       <div id="import-status" style="font-size: 13px; margin-top: 8px; display:none;"></div>
     </div>
@@ -143,9 +136,9 @@ input:focus { border-color: #1a1a1a; }
       <input type="text" id="a-home" placeholder="เช่น บราซิล 🇧🇷" />
       <div class="label">ทีมเยือน</div>
       <input type="text" id="a-away" placeholder="เช่น โมร็อกโก 🇲🇦" />
-      <div class="label">วันที่และเวลา</div>
+      <div class="label">วันที่และเวลา (แสดงผล)</div>
       <input type="text" id="a-date" placeholder="เช่น 13 มิ.ย. 2026 • 09:00" />
-      <div class="label">วันเวลาแข่งขัน (สำหรับปิดทายอัตโนมัติ)</div>
+      <div class="label">วันเวลาแข่งขัน (สำหรับเปิด/ปิดทายอัตโนมัติ)</div>
       <input type="datetime-local" id="a-datetime" />
       <div class="label">กลุ่ม / รอบ</div>
       <input type="text" id="a-group" placeholder="เช่น Group C" />
@@ -205,14 +198,13 @@ async function doLogin() {
   const username = document.getElementById('login-username').value.trim();
   const password = document.getElementById('login-password').value.trim();
   const err = document.getElementById('login-err');
-  const btn = document.querySelector('#form-login .btn.primary');
+  const btn = document.getElementById('btn-login');
   if (!username || !password) { err.style.display=''; err.textContent='กรุณากรอกข้อมูลให้ครบ'; return; }
 
   if (username === ADMIN) {
     if (password !== ADMIN_PASSWORD) { err.style.display=''; err.textContent='รหัสผ่าน Admin ไม่ถูกต้อง'; return; }
     err.style.display = 'none';
-    user = ADMIN;
-    displayName = 'Admin';
+    user = ADMIN; displayName = 'Admin';
     document.getElementById('main-greeting').textContent = 'สวัสดี Admin ⚙️';
     document.getElementById('btn-admin').style.display = '';
     showScreen('main');
@@ -231,8 +223,7 @@ async function doLogin() {
       err.style.display=''; err.textContent=result.message || 'Username หรือรหัสผ่านไม่ถูกต้อง';
       btn.textContent = 'เข้าสู่ระบบ →'; btn.disabled = false; return;
     }
-    user = username;
-    displayName = result.display_name;
+    user = username; displayName = result.display_name;
     document.getElementById('main-greeting').textContent = 'สวัสดี ' + displayName + ' ⚽';
     document.getElementById('btn-admin').style.display = 'none';
     showScreen('main');
@@ -249,7 +240,7 @@ async function doRegister() {
   const password = document.getElementById('reg-password').value.trim();
   const dname = document.getElementById('reg-displayname').value.trim();
   const err = document.getElementById('register-err');
-  const btn = document.querySelector('#form-register .btn.primary');
+  const btn = document.getElementById('btn-register');
   if (!username || !password || !dname) { err.style.display=''; err.textContent='กรุณากรอกข้อมูลให้ครบ'; return; }
   if (username.length < 3) { err.style.display=''; err.textContent='Username ต้องมีอย่างน้อย 3 ตัวอักษร'; return; }
   if (password.length < 4) { err.style.display=''; err.textContent='รหัสผ่านต้องมีอย่างน้อย 4 ตัวอักษร'; return; }
@@ -265,8 +256,7 @@ async function doRegister() {
       err.style.display=''; err.textContent=result.message || 'สมัครไม่สำเร็จ';
       btn.textContent = 'สมัครสมาชิก →'; btn.disabled = false; return;
     }
-    user = username;
-    displayName = dname;
+    user = username; displayName = dname;
     document.getElementById('main-greeting').textContent = 'สวัสดี ' + displayName + ' ⚽';
     document.getElementById('btn-admin').style.display = 'none';
     showScreen('main');
@@ -284,6 +274,8 @@ function doLogout() {
     const el = document.getElementById(id);
     if (el) el.value = '';
   });
+  document.getElementById('btn-login').textContent = 'เข้าสู่ระบบ →';
+  document.getElementById('btn-login').disabled = false;
   switchAuthTab('login');
   showScreen('login');
 }
@@ -291,7 +283,6 @@ function doLogout() {
 async function loadData() {
   document.getElementById('tab-matches').innerHTML = '<div class="spinner">⏳ กำลังโหลดข้อมูล...</div>';
   try {
-    // โหลด matches และ picks พร้อมกันเลยค่ะ
     const [m, p] = await Promise.all([
       api({ action: 'getMatches' }),
       api({ action: 'getPicks', user })
@@ -307,32 +298,26 @@ function formatThaiDate(datetimeStr) {
   if (!datetimeStr) return '';
   try {
     const d = new Date(datetimeStr);
-    const thai = new Intl.DateTimeFormat('th-TH', {
+    return new Intl.DateTimeFormat('th-TH', {
       timeZone: 'Asia/Bangkok',
       day: 'numeric', month: 'short', year: 'numeric',
       hour: '2-digit', minute: '2-digit'
     }).format(d);
-    return thai;
   } catch(e) { return datetimeStr; }
 }
 
 function renderMatches() {
   const el = document.getElementById('tab-matches');
   if (!matches.length) { el.innerHTML = '<div class="empty">ยังไม่มีแมตช์ที่เปิดทาย<br>รอ Admin เพิ่มแมตช์ค่ะ</div>'; return; }
-  
-  // กรองแค่ Group Stage ก่อนค่ะ
   const groupMatches = matches.filter(m => m.group && m.group.startsWith('Group'));
-  const otherMatches = matches.filter(m => !m.group || !m.group.startsWith('Group'));
-  const displayMatches = groupMatches.length ? groupMatches : otherMatches;
-
+  const displayMatches = groupMatches.length ? groupMatches : matches;
   el.innerHTML = displayMatches.map(m => {
     const p = myPicks[m.id];
     const hasResult = m.result_home !== "" && m.result_home !== null && m.result_home !== undefined;
     const statusBadge = hasResult
       ? `<span class="badge badge-done">จบแล้ว • ${m.result_home}-${m.result_away}</span>`
-      : m.open
-        ? `<span class="badge badge-open">เปิดทาย</span>`
-        : `<span class="badge badge-closed">ปิดทาย</span>`;
+      : m.open ? `<span class="badge badge-open">เปิดทาย</span>`
+      : `<span class="badge badge-closed">ปิดทาย</span>`;
     const pickInfo = p ? `<div class="match-pick">ทายไว้: ${p.team} (${p.score_home}-${p.score_away})</div>` : '';
     const canPick = m.open && !hasResult;
     const dateDisplay = m.datetime ? formatThaiDate(m.datetime) : m.date;
@@ -374,7 +359,7 @@ function openPredict(matchId) {
           <input class="score-input" type="number" id="sa" min="0" max="20" value="${p?p.score_away:0}" />
         </div>
       </div>
-      <button class="btn primary" onclick="savePick('${matchId}','${m.home}','${m.away}')">บันทึกการทาย ✓</button>
+      <button class="btn primary" id="btn-save-pick" onclick="savePick('${matchId}','${m.home}','${m.away}')">บันทึกการทาย ✓</button>
       <div id="pick-err" class="err" style="display:none;"></div>
     </div>`;
   if (p) selTeam = p.team;
@@ -387,22 +372,30 @@ function selectTeam(team) {
     const el = document.getElementById(id);
     if (el) el.classList.remove('selected');
   });
-  const map = { [document.getElementById('btn-home')?.textContent]: 'btn-home', 'เสมอ': 'btn-draw', [document.getElementById('btn-away')?.textContent]: 'btn-away' };
-  const btnId = map[team];
-  if (btnId) document.getElementById(btnId)?.classList.add('selected');
+  const homeText = document.getElementById('btn-home')?.textContent;
+  const awayText = document.getElementById('btn-away')?.textContent;
+  if (team === homeText) document.getElementById('btn-home')?.classList.add('selected');
+  else if (team === 'เสมอ') document.getElementById('btn-draw')?.classList.add('selected');
+  else if (team === awayText) document.getElementById('btn-away')?.classList.add('selected');
 }
 
 async function savePick(matchId, home, away) {
   const err = document.getElementById('pick-err');
+  const btn = document.getElementById('btn-save-pick');
   if (!selTeam) { err.style.display=''; err.textContent='กรุณาเลือกทีมก่อนค่ะ'; return; }
   const sh = parseInt(document.getElementById('sh').value) || 0;
   const sa = parseInt(document.getElementById('sa').value) || 0;
+  btn.textContent = '⏳ กำลังบันทึก...';
+  btn.disabled = true;
   try {
     await apiPost({ action: 'savePick', match_id: matchId, user, team: selTeam, score_home: sh, score_away: sa });
     myPicks[matchId] = { team: selTeam, score_home: sh, score_away: sa };
     showScreen('main');
     renderMatches();
-  } catch(e) { err.style.display=''; err.textContent='บันทึกไม่สำเร็จ กรุณาลองใหม่'; }
+  } catch(e) {
+    err.style.display=''; err.textContent='บันทึกไม่สำเร็จ กรุณาลองใหม่';
+    btn.textContent = 'บันทึกการทาย ✓'; btn.disabled = false;
+  }
 }
 
 function renderPicks() {
@@ -438,33 +431,28 @@ function renderPicks() {
 
 async function renderLeaderboard() {
   const el = document.getElementById('tab-leaderboard');
-  el.innerHTML = '<div class="spinner">กำลังคำนวณ...</div>';
+  el.innerHTML = '<div class="spinner">⏳ กำลังคำนวณ...</div>';
   try {
     const data = await api({ action: 'getLeaderboard' });
     if (!data.length) { el.innerHTML = '<div class="empty">ยังไม่มีคะแนนค่ะ</div>'; return; }
-    el.innerHTML = '<div class="card">' + data.map((u, i) => {
-      const medals = ['🥇','🥈','🥉'];
-      return `<div class="lb-row">
+    const medals = ['🥇','🥈','🥉'];
+    el.innerHTML = '<div class="card">' + data.map((u, i) => `
+      <div class="lb-row">
         <span class="rank">${medals[i] || (i+1)}</span>
         <span style="flex:1;font-size:14px;${u.username===user?'font-weight:700;':''}">${u.display_name}${u.username===user?' (ฉัน)':''}</span>
         <span style="font-size:16px;font-weight:700;">${u.score} แต้ม</span>
-      </div>`;
-    }).join('') + '</div>';
+      </div>`).join('') + '</div>';
   } catch(e) { el.innerHTML = '<div class="empty">โหลดไม่สำเร็จ กรุณาลองใหม่</div>'; }
 }
 
 async function importAllMatches() {
-  if (!confirm('Import โปรแกรมบอลโลก 2026 ทั้งหมด 104 แมตช์?\nแมตช์จะถูกปิดทายไว้ก่อน Admin เปิดเองได้ค่ะ')) return;
+  if (!confirm('Import โปรแกรมบอลโลก 2026 ทั้งหมด 104 แมตช์?\nแมตช์จะปิดทายไว้ก่อน ระบบเปิดอัตโนมัติ 48 ชั่วโมงก่อนแข่งค่ะ')) return;
   const btn = document.getElementById('btn-import');
   const status = document.getElementById('import-status');
-  btn.disabled = true;
-  btn.textContent = 'กำลัง Import...';
-  status.style.display = '';
-  status.style.color = '#888';
+  btn.disabled = true; btn.textContent = 'กำลัง Import...';
+  status.style.display = ''; status.style.color = '#888';
   status.textContent = 'กำลังเพิ่มแมตช์...';
-
   const allMatches = [
-    // GROUP STAGE (เวลาไทย GMT+7)
     {home:'🇲🇽 เม็กซิโก',away:'🇿🇦 แอฟริกาใต้',date:'11 มิ.ย. 04:00',group:'Group A',datetime:'2026-06-11T04:00'},
     {home:'🇰🇷 เกาหลีใต้',away:'TBD',date:'12 มิ.ย. 11:00',group:'Group A',datetime:'2026-06-12T11:00'},
     {home:'🇨🇦 แคนาดา',away:'TBD',date:'12 มิ.ย. 03:00',group:'Group B',datetime:'2026-06-12T03:00'},
@@ -537,8 +525,7 @@ async function importAllMatches() {
     {home:'TBD',away:'🇺🇿 อุซเบกิสถาน',date:'28 มิ.ย. 02:30',group:'Group K',datetime:'2026-06-28T02:30'},
     {home:'🇩🇿 แอลจีเรีย',away:'🇦🇹 ออสเตรีย',date:'28 มิ.ย. 05:00',group:'Group J',datetime:'2026-06-28T05:00'},
     {home:'🇯🇴 จอร์แดน',away:'🇦🇷 อาร์เจนตินา',date:'28 มิ.ย. 05:00',group:'Group J',datetime:'2026-06-28T05:00'},
-    // ROUND OF 32
-    {home:'Round of 32',away:'Match 1',date:'28 มิ.ย.',group:'Round of 32',datetime:'2026-06-29T02:00'},
+    {home:'Round of 32',away:'Match 1',date:'29 มิ.ย.',group:'Round of 32',datetime:'2026-06-29T02:00'},
     {home:'Round of 32',away:'Match 2',date:'29 มิ.ย.',group:'Round of 32',datetime:'2026-06-29T20:00'},
     {home:'Round of 32',away:'Match 3',date:'29 มิ.ย.',group:'Round of 32',datetime:'2026-06-29T23:30'},
     {home:'Round of 32',away:'Match 4',date:'29 มิ.ย.',group:'Round of 32',datetime:'2026-06-30T04:00'},
@@ -554,7 +541,6 @@ async function importAllMatches() {
     {home:'Round of 32',away:'Match 14',date:'3 ก.ค.',group:'Round of 32',datetime:'2026-07-03T21:00'},
     {home:'Round of 32',away:'Match 15',date:'3 ก.ค.',group:'Round of 32',datetime:'2026-07-04T01:00'},
     {home:'Round of 32',away:'Match 16',date:'3 ก.ค.',group:'Round of 32',datetime:'2026-07-04T04:30'},
-    // ROUND OF 16
     {home:'Round of 16',away:'Match 1',date:'4 ก.ค.',group:'Round of 16',datetime:'2026-07-05T00:00'},
     {home:'Round of 16',away:'Match 2',date:'4 ก.ค.',group:'Round of 16',datetime:'2026-07-05T04:00'},
     {home:'Round of 16',away:'Match 3',date:'5 ก.ค.',group:'Round of 16',datetime:'2026-07-05T23:00'},
@@ -563,19 +549,15 @@ async function importAllMatches() {
     {home:'Round of 16',away:'Match 6',date:'6 ก.ค.',group:'Round of 16',datetime:'2026-07-07T03:00'},
     {home:'Round of 16',away:'Match 7',date:'7 ก.ค.',group:'Round of 16',datetime:'2026-07-07T19:00'},
     {home:'Round of 16',away:'Match 8',date:'7 ก.ค.',group:'Round of 16',datetime:'2026-07-07T23:00'},
-    // QUARTERFINALS
     {home:'QF',away:'Match 1',date:'9 ก.ค.',group:'Quarterfinal',datetime:'2026-07-09T23:00'},
     {home:'QF',away:'Match 2',date:'10 ก.ค.',group:'Quarterfinal',datetime:'2026-07-10T22:00'},
     {home:'QF',away:'Match 3',date:'11 ก.ค.',group:'Quarterfinal',datetime:'2026-07-12T00:00'},
     {home:'QF',away:'Match 4',date:'11 ก.ค.',group:'Quarterfinal',datetime:'2026-07-12T04:00'},
-    // SEMIFINALS
     {home:'SF',away:'Match 1',date:'14 ก.ค.',group:'Semifinal',datetime:'2026-07-15T00:00'},
     {home:'SF',away:'Match 2',date:'15 ก.ค.',group:'Semifinal',datetime:'2026-07-15T23:00'},
-    // BRONZE + FINAL
     {home:'อันดับ 3',away:'อันดับ 4',date:'18 ก.ค.',group:'Bronze Medal',datetime:'2026-07-19T00:00'},
     {home:'แชมป์',away:'รองแชมป์',date:'19 ก.ค. 03:00',group:'Final',datetime:'2026-07-19T22:00'},
   ];
-
   let success = 0;
   for (let i = 0; i < allMatches.length; i++) {
     const m = allMatches[i];
@@ -586,13 +568,11 @@ async function importAllMatches() {
     } catch(e) {}
     await new Promise(r => setTimeout(r, 200));
   }
-
   matches = await api({ action: 'getMatches' });
   renderAdminList();
   status.style.color = '#2e7d32';
   status.textContent = `Import สำเร็จ ${success}/${allMatches.length} แมตช์ค่ะ`;
-  btn.disabled = false;
-  btn.textContent = '⚽ Import 104 แมตช์';
+  btn.disabled = false; btn.textContent = '⚽ Import 104 แมตช์';
 }
 
 async function adminAdd() {
@@ -649,11 +629,12 @@ function renderAdminList() {
   if (!matches.length) { el.innerHTML = ''; return; }
   el.innerHTML = matches.map(m => {
     const hasResult = m.result_home !== "" && m.result_home !== null && m.result_home !== undefined;
+    const dateDisplay = m.datetime ? formatThaiDate(m.datetime) : m.date;
     return `<div class="card">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;gap:8px;">
         <div>
           <div style="font-weight:600;font-size:14px;">${m.home} vs ${m.away}</div>
-          <div style="font-size:12px;color:#888;margin-top:2px;">${m.group} • ${m.date}</div>
+          <div style="font-size:12px;color:#888;margin-top:2px;">${m.group} • ${dateDisplay}</div>
         </div>
         <div>${hasResult ? `<span class="badge badge-done">ผล: ${m.result_home}-${m.result_away}</span>` : m.open ? `<span class="badge badge-open">เปิด</span>` : `<span class="badge badge-closed">ปิด</span>`}</div>
       </div>
@@ -667,16 +648,6 @@ function renderAdminList() {
     </div>`;
   }).join('');
 }
-
-document.getElementById('screen-admin').addEventListener('click', function(e) {
-  if (e.target.closest('#screen-admin') && !document.getElementById('admin-list').innerHTML) {
-    renderAdminList();
-  }
-});
-
-document.getElementById('btn-admin').addEventListener('click', function() {
-  renderAdminList();
-});
 </script>
 </body>
 </html>
