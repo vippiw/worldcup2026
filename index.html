@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ทายผลบอลโลก 2026 ⚽</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f5f5; color: #1a1a1a; font-size: 15px; }
+.screen { display: none; min-height: 100vh; }
+.screen.active { display: block; }
+.container { max-width: 480px; margin: 0 auto; padding: 16px; }
+.card { background: #fff; border-radius: 12px; padding: 16px; margin-bottom: 12px; border: 1px solid #e8e8e8; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 10px 20px; border-radius: 8px; border: 1px solid #ddd; background: #fff; color: #1a1a1a; font-size: 14px; cursor: pointer; transition: all 0.15s; font-family: inherit; width: 100%; }
+.btn:hover { background: #f5f5f5; }
+.btn.primary { background: #1a1a1a; color: #fff; border-color: #1a1a1a; }
+.btn.primary:hover { background: #333; }
+.btn.danger { color: #e53935; border-color: #e53935; }
+.btn.danger:hover { background: #fff5f5; }
+.btn.sm { padding: 6px 12px; font-size: 13px; width: auto; }
+.label { font-size: 12px; color: #888; margin-bottom: 4px; }
+.badge { display: inline-block; font-size: 11px; padding: 3px 10px; border-radius: 99px; font-weight: 500; }
+.badge-open { background: #e8f5e9; color: #2e7d32; }
+.badge-closed { background: #f5f5f5; color: #888; }
+.badge-done { background: #e3f2fd; color: #1565c0; }
+input[type=text], input[type=number], input[type=password], input[type=datetime-local], select { width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; font-family: inherit; background: #fff; color: #1a1a1a; margin-bottom: 10px; outline: none; }
+input:focus { border-color: #1a1a1a; }
+.team-btn { flex: 1; padding: 14px 8px; border: 2px solid #e8e8e8; border-radius: 10px; background: #fff; color: #1a1a1a; font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.15s; font-family: inherit; text-align: center; }
+.team-btn:hover { border-color: #bbb; }
+.team-btn.selected { border-color: #1a1a1a; background: #1a1a1a; color: #fff; }
+.team-btn.draw { flex: 0.5; font-size: 12px; }
+.score-input { width: 56px; height: 48px; text-align: center; font-size: 22px; font-weight: 600; border: 2px solid #e8e8e8; border-radius: 10px; background: #fff; color: #1a1a1a; font-family: inherit; outline: none; }
+.score-input:focus { border-color: #1a1a1a; }
+.nav { display: flex; align-items: center; gap: 8px; padding: 16px 0 8px; }
+.nav-title { font-size: 17px; font-weight: 600; flex: 1; }
+.tab-bar { display: flex; gap: 4px; background: #f0f0f0; border-radius: 10px; padding: 4px; margin-bottom: 16px; }
+.tab { flex: 1; padding: 8px; border-radius: 7px; font-size: 13px; cursor: pointer; color: #888; border: none; background: transparent; font-family: inherit; font-weight: 500; }
+.tab.active { background: #fff; color: #1a1a1a; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+.pick-row { display: flex; justify-content: space-between; align-items: flex-start; padding: 10px 0; border-bottom: 1px solid #f0f0f0; }
+.lb-row { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid #f0f0f0; }
+.rank { font-size: 13px; color: #888; width: 28px; text-align: center; }
+.empty { color: #aaa; font-size: 14px; text-align: center; padding: 3rem 0; }
+.pts-correct { color: #2e7d32; font-weight: 600; }
+.pts-bonus { color: #1565c0; font-weight: 600; }
+.pts-wrong { color: #e53935; font-weight: 600; }
+.header-hero { text-align: center; padding: 2rem 0 1rem; }
+.spinner { text-align: center; padding: 2rem; color: #aaa; font-size: 14px; }
+.err { font-size: 12px; color: #e53935; margin-top: 6px; }
+.match-teams { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+.match-meta { font-size: 12px; color: #888; }
+.match-pick { font-size: 12px; color: #555; margin-top: 6px; background: #f8f8f8; border-radius: 6px; padding: 4px 8px; display: inline-block; }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="screen-login" class="screen active">
+  <div class="container">
+    <div class="header-hero">
+      <div style="font-size: 48px; margin-bottom: 8px;">⚽</div>
+      <h1 style="font-size: 24px; font-weight: 700; margin-bottom: 4px;">ทายผลบอลโลก 2026</h1>
+      <p style="font-size: 13px; color: #888;">FIFA World Cup • June–July 2026</p>
+    </div>
+
+    <!-- TAB LOGIN/REGISTER -->
+    <div class="tab-bar" style="margin-bottom: 12px;">
+      <button class="tab active" id="tab-login-btn" onclick="switchAuthTab('login')">เข้าสู่ระบบ</button>
+      <button class="tab" id="tab-register-btn" onclick="switchAuthTab('register')">สมัครสมาชิก</button>
+    </div>
+
+    <!-- LOGIN FORM -->
+    <div id="form-login" class="card">
+      <div class="label">Username</div>
+      <input type="text" id="login-username" placeholder="กรอก Username..." />
+      <div class="label">รหัสผ่าน</div>
+      <input type="password" id="login-password" placeholder="กรอกรหัสผ่าน..." />
+      <button class="btn primary" onclick="doLogin()">เข้าสู่ระบบ →</button>
+      <div id="login-err" class="err" style="display:none;"></div>
+    </div>
+
+    <!-- REGISTER FORM -->
+    <div id="form-register" class="card" style="display:none;">
+      <div class="label">Username <span style="color:#888;font-weight:400;">(อย่างน้อย 3 ตัวอักษร)</span></div>
+      <input type="text" id="reg-username" placeholder="ตั้ง Username..." />
+      <div class="label">รหัสผ่าน <span style="color:#888;font-weight:400;">(อย่างน้อย 4 ตัวอักษร)</span></div>
+      <input type="password" id="reg-password" placeholder="ตั้งรหัสผ่าน..." />
+      <div class="label">ชื่อที่แสดงในตาราง <span style="color:#888;font-weight:400;">(ห้ามซ้ำกับคนอื่น)</span></div>
+      <input type="text" id="reg-displayname" placeholder="เช่น แมนติเนช, นก, พีท..." />
+      <button class="btn primary" onclick="doRegister()">สมัครสมาชิก →</button>
+      <div id="register-err" class="err" style="display:none;"></div>
+    </div>
+
+    <p style="font-size: 12px; color: #aaa; text-align: center; margin-top: 8px;">ทายผลบอลโลก 2026 ร่วมกับเพื่อนๆ ⚽</p>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div id="screen-main" class="screen">
+  <div class="container">
+    <div class="nav">
+      <span class="nav-title" id="main-greeting">สวัสดี ⚽</span>
+      <button class="btn sm" id="btn-admin" style="display:none" onclick="showScreen('admin')">⚙️ Admin</button>
+      <button class="btn sm danger" onclick="doLogout()">ออก</button>
+    </div>
+    <div class="tab-bar">
+      <button class="tab active" onclick="switchTab('matches', this)">แมตช์</button>
+      <button class="tab" onclick="switchTab('picks', this)">ของฉัน</button>
+      <button class="tab" onclick="switchTab('leaderboard', this)">ตาราง</button>
+    </div>
+    <div id="tab-matches"><div class="spinner">กำลังโหลด...</div></div>
+    <div id="tab-picks" style="display:none"></div>
+    <div id="tab-leaderboard" style="display:none"></div>
+  </div>
+</div>
+
+<!-- PREDICT -->
+<div id="screen-predict" class="screen">
+  <div class="container">
+    <div class="nav">
+      <button class="btn sm" onclick="showScreen('main'); renderMatches()">← กลับ</button>
+      <span class="nav-title" id="predict-title"></span>
+    </div>
+    <div id="predict-content"></div>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div id="screen-admin" class="screen">
+  <div class="container">
+    <div class="nav">
+      <button class="btn sm" onclick="showScreen('main'); renderMatches()">← กลับ</button>
+      <span class="nav-title">Admin Panel</span>
+    </div>
+    <div class="card">
+      <div style="font-size: 15px; font-weight: 600; margin-bottom: 8px;">Import โปรแกรมบอลโลก 2026</div>
+      <p style="font-size: 13px; color: #888; margin-bottom: 12px;">Import ทั้งหมด 104 แมตช์ทีเดียว ปิดทายไว้ก่อน Admin เปิดเองได้ค่ะ</p>
+      <button class="btn primary" onclick="importAllMatches()" id="btn-import">⚽ Import 104 แมตช์</button>
+      <div id="import-status" style="font-size: 13px; margin-top: 8px; display:none;"></div>
+    </div>
+    <div class="card">
+      <div style="font-size: 15px; font-weight: 600; margin-bottom: 12px;">เพิ่มแมตช์ใหม่</div>
+      <div class="label">ทีมเจ้าบ้าน</div>
+      <input type="text" id="a-home" placeholder="เช่น บราซิล 🇧🇷" />
+      <div class="label">ทีมเยือน</div>
+      <input type="text" id="a-away" placeholder="เช่น โมร็อกโก 🇲🇦" />
+      <div class="label">วันที่และเวลา</div>
+      <input type="text" id="a-date" placeholder="เช่น 13 มิ.ย. 2026 • 09:00" />
+      <div class="label">วันเวลาแข่งขัน (สำหรับปิดทายอัตโนมัติ)</div>
+      <input type="datetime-local" id="a-datetime" />
+      <div class="label">กลุ่ม / รอบ</div>
+      <input type="text" id="a-group" placeholder="เช่น Group C" />
+      <button class="btn primary" onclick="adminAdd()">+ เพิ่มแมตช์</button>
+      <div id="admin-err" class="err" style="display:none;"></div>
+    </div>
+    <div id="admin-list"></div>
+  </div>
+</div>
+
+<script>
+const API = "https://script.google.com/macros/s/AKfycbxdQWYbpeEKKxav4UfxvXMfndUnfkDByq0oXCpNi2y9EBhnD7GNdxN9N1THna_LYi4/exec";
+const ADMIN = "admin";
+const ADMIN_PASSWORD = "987654321";
+
+let user = null;
+let displayName = null;
+let matches = [];
+let myPicks = {};
+let selTeam = null;
+let curMatchId = null;
+
+function switchAuthTab(tab) {
+  document.getElementById('form-login').style.display = tab === 'login' ? '' : 'none';
+  document.getElementById('form-register').style.display = tab === 'register' ? '' : 'none';
+  document.getElementById('tab-login-btn').classList.toggle('active', tab === 'login');
+  document.getElementById('tab-register-btn').classList.toggle('active', tab === 'register');
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + id).classList.add('active');
+}
+
+function switchTab(tab, el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  ['matches','picks','leaderboard'].forEach(t => {
+    document.getElementById('tab-' + t).style.display = t === tab ? '' : 'none';
+  });
+  if (tab === 'matches') renderMatches();
+  if (tab === 'picks') renderPicks();
+  if (tab === 'leaderboard') renderLeaderboard();
+}
+
+async function api(params) {
+  const url = API + '?' + new URLSearchParams(params);
+  const r = await fetch(url);
+  return r.json();
+}
+
+async function apiPost(data) {
+  return await api(data);
+}
+
+async function doLogin() {
+  const username = document.getElementById('login-username').value.trim();
+  const password = document.getElementById('login-password').value.trim();
+  const err = document.getElementById('login-err');
+  if (!username || !password) { err.style.display=''; err.textContent='กรุณากรอกข้อมูลให้ครบ'; return; }
+
+  if (username === ADMIN) {
+    if (password !== ADMIN_PASSWORD) { err.style.display=''; err.textContent='รหัสผ่าน Admin ไม่ถูกต้อง'; return; }
+    err.style.display = 'none';
+    user = ADMIN;
+    displayName = 'Admin';
+    document.getElementById('main-greeting').textContent = 'สวัสดี Admin ⚙️';
+    document.getElementById('btn-admin').style.display = '';
+    showScreen('main');
+    await loadData();
+    renderMatches();
+    return;
+  }
+
+  try {
+    const result = await apiPost({ action: 'login', username, password });
+    if (!result.success) { err.style.display=''; err.textContent=result.message || 'Username หรือรหัสผ่านไม่ถูกต้อง'; return; }
+    err.style.display = 'none';
+    user = username;
+    displayName = result.display_name;
+    document.getElementById('main-greeting').textContent = 'สวัสดี ' + displayName + ' ⚽';
+    document.getElementById('btn-admin').style.display = 'none';
+    showScreen('main');
+    await loadData();
+    renderMatches();
+  } catch(e) { err.style.display=''; err.textContent='เชื่อมต่อไม่สำเร็จ กรุณาลองใหม่'; }
+}
+
+async function doRegister() {
+  const username = document.getElementById('reg-username').value.trim();
+  const password = document.getElementById('reg-password').value.trim();
+  const dname = document.getElementById('reg-displayname').value.trim();
+  const err = document.getElementById('register-err');
+  if (!username || !password || !dname) { err.style.display=''; err.textContent='กรุณากรอกข้อมูลให้ครบ'; return; }
+  if (username.length < 3) { err.style.display=''; err.textContent='Username ต้องมีอย่างน้อย 3 ตัวอักษร'; return; }
+  if (password.length < 4) { err.style.display=''; err.textContent='รหัสผ่านต้องมีอย่างน้อย 4 ตัวอักษร'; return; }
+  if (username === ADMIN) { err.style.display=''; err.textContent='ไม่สามารถใช้ชื่อนี้ได้'; return; }
+  try {
+    const result = await apiPost({ action: 'register', username, password, display_name: dname });
+    if (!result.success) { err.style.display=''; err.textContent=result.message || 'สมัครไม่สำเร็จ'; return; }
+    err.style.display = 'none';
+    user = username;
+    displayName = dname;
+    document.getElementById('main-greeting').textContent = 'สวัสดี ' + displayName + ' ⚽';
+    document.getElementById('btn-admin').style.display = 'none';
+    showScreen('main');
+    await loadData();
+    renderMatches();
+  } catch(e) { err.style.display=''; err.textContent='เชื่อมต่อไม่สำเร็จ กรุณาลองใหม่'; }
+}
+
+function doLogout() {
+  user = null; displayName = null; matches = []; myPicks = {};
+  ['login-username','login-password','reg-username','reg-password','reg-displayname'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  switchAuthTab('login');
+  showScreen('login');
+}
+
+async function loadData() {
+  document.getElementById('tab-matches').innerHTML = '<div class="spinner">กำลังโหลดข้อมูล...</div>';
+  try {
+    matches = await api({ action: 'getMatches' });
+    myPicks = await api({ action: 'getPicks', user });
+  } catch(e) {
+    document.getElementById('tab-matches').innerHTML = '<div class="empty">โหลดข้อมูลไม่สำเร็จ กรุณาลองใหม่</div>';
+  }
+}
+
+function renderMatches() {
+  const el = document.getElementById('tab-matches');
+  if (!matches.length) { el.innerHTML = '<div class="empty">ยังไม่มีแมตช์ที่เปิดทาย<br>รอ Admin เพิ่มแมตช์ค่ะ</div>'; return; }
+  el.innerHTML = matches.map(m => {
+    const p = myPicks[m.id];
+    const hasResult = m.result_home !== "" && m.result_home !== null && m.result_home !== undefined;
+    const statusBadge = hasResult
+      ? `<span class="badge badge-done">จบแล้ว • ${m.result_home}-${m.result_away}</span>`
+      : m.open
+        ? `<span class="badge badge-open">เปิดทาย</span>`
+        : `<span class="badge badge-closed">ปิดทาย</span>`;
+    const pickInfo = p ? `<div class="match-pick">ทายไว้: ${p.team} (${p.score_home}-${p.score_away})</div>` : '';
+    const canPick = m.open && !hasResult;
+    return `<div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">
+        <div class="match-meta">${m.group} • ${m.date}</div>
+        ${statusBadge}
+      </div>
+      <div class="match-teams">${m.home} <span style="color:#aaa;font-weight:400;">vs</span> ${m.away}</div>
+      ${pickInfo}
+      ${canPick ? `<button class="btn sm" style="margin-top:10px;" onclick="openPredict('${m.id}')">🎯 ${p ? 'แก้ไขการทาย' : 'ทายผล'}</button>` : ''}
+    </div>`;
+  }).join('');
+}
+
+function openPredict(matchId) {
+  const m = matches.find(x => x.id === matchId);
+  curMatchId = matchId;
+  selTeam = null;
+  const p = myPicks[matchId];
+  document.getElementById('predict-title').textContent = m.home + ' vs ' + m.away;
+  document.getElementById('predict-content').innerHTML = `
+    <div class="card">
+      <div class="label" style="margin-bottom:10px;font-size:13px;">เลือกทีมที่คิดว่าจะชนะ</div>
+      <div style="display:flex;gap:8px;margin-bottom:20px;">
+        <button class="team-btn ${p&&p.team===m.home?'selected':''}" id="btn-home" onclick="selectTeam('${m.home}')">${m.home}</button>
+        <button class="team-btn draw ${p&&p.team==='เสมอ'?'selected':''}" id="btn-draw" onclick="selectTeam('เสมอ')">เสมอ</button>
+        <button class="team-btn ${p&&p.team===m.away?'selected':''}" id="btn-away" onclick="selectTeam('${m.away}')">${m.away}</button>
+      </div>
+      <div class="label" style="margin-bottom:10px;font-size:13px;">ทายสกอร์ (ถูกได้โบนัส +2 คะแนน)</div>
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px;">
+        <div style="text-align:center;">
+          <div style="font-size:11px;color:#888;margin-bottom:6px;">${m.home}</div>
+          <input class="score-input" type="number" id="sh" min="0" max="20" value="${p?p.score_home:0}" />
+        </div>
+        <span style="font-size:22px;color:#bbb;font-weight:300;">-</span>
+        <div style="text-align:center;">
+          <div style="font-size:11px;color:#888;margin-bottom:6px;">${m.away}</div>
+          <input class="score-input" type="number" id="sa" min="0" max="20" value="${p?p.score_away:0}" />
+        </div>
+      </div>
+      <button class="btn primary" onclick="savePick('${matchId}','${m.home}','${m.away}')">บันทึกการทาย ✓</button>
+      <div id="pick-err" class="err" style="display:none;"></div>
+    </div>`;
+  if (p) selTeam = p.team;
+  showScreen('predict');
+}
+
+function selectTeam(team) {
+  selTeam = team;
+  ['btn-home','btn-draw','btn-away'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.remove('selected');
+  });
+  const map = { [document.getElementById('btn-home')?.textContent]: 'btn-home', 'เสมอ': 'btn-draw', [document.getElementById('btn-away')?.textContent]: 'btn-away' };
+  const btnId = map[team];
+  if (btnId) document.getElementById(btnId)?.classList.add('selected');
+}
+
+async function savePick(matchId, home, away) {
+  const err = document.getElementById('pick-err');
+  if (!selTeam) { err.style.display=''; err.textContent='กรุณาเลือกทีมก่อนค่ะ'; return; }
+  const sh = parseInt(document.getElementById('sh').value) || 0;
+  const sa = parseInt(document.getElementById('sa').value) || 0;
+  try {
+    await apiPost({ action: 'savePick', match_id: matchId, user, team: selTeam, score_home: sh, score_away: sa });
+    myPicks[matchId] = { team: selTeam, score_home: sh, score_away: sa };
+    showScreen('main');
+    renderMatches();
+  } catch(e) { err.style.display=''; err.textContent='บันทึกไม่สำเร็จ กรุณาลองใหม่'; }
+}
+
+function renderPicks() {
+  const el = document.getElementById('tab-picks');
+  if (!Object.keys(myPicks).length) { el.innerHTML = '<div class="empty">ยังไม่มีการทายค่ะ</div>'; return; }
+  let html = '<div class="card">';
+  matches.forEach(m => {
+    const p = myPicks[m.id];
+    if (!p) return;
+    const hasResult = m.result_home !== "" && m.result_home !== null && m.result_home !== undefined;
+    let pts = '', cls = '';
+    if (hasResult) {
+      const rh = parseInt(m.result_home), ra = parseInt(m.result_away);
+      const actualTeam = rh > ra ? m.home : rh < ra ? m.away : 'เสมอ';
+      const correct = p.team === actualTeam;
+      const bonus = correct && parseInt(p.score_home) === rh && parseInt(p.score_away) === ra;
+      if (bonus) { pts = '+5 pts'; cls = 'pts-bonus'; }
+      else if (correct) { pts = '+3 pts'; cls = 'pts-correct'; }
+      else { pts = '0 pts'; cls = 'pts-wrong'; }
+    }
+    html += `<div class="pick-row">
+      <div>
+        <div style="font-weight:600;font-size:14px;">${m.home} vs ${m.away}</div>
+        <div style="font-size:12px;color:#888;margin-top:2px;">ทาย: ${p.team} (${p.score_home}-${p.score_away})</div>
+        ${hasResult ? `<div style="font-size:12px;color:#888;">ผล: ${m.result_home}-${m.result_away}</div>` : ''}
+      </div>
+      ${pts ? `<span class="${cls}">${pts}</span>` : '<span style="font-size:12px;color:#bbb;">รอผล</span>'}
+    </div>`;
+  });
+  html += '</div>';
+  el.innerHTML = html;
+}
+
+async function renderLeaderboard() {
+  const el = document.getElementById('tab-leaderboard');
+  el.innerHTML = '<div class="spinner">กำลังคำนวณ...</div>';
+  try {
+    const data = await api({ action: 'getLeaderboard' });
+    if (!data.length) { el.innerHTML = '<div class="empty">ยังไม่มีคะแนนค่ะ</div>'; return; }
+    el.innerHTML = '<div class="card">' + data.map((u, i) => {
+      const medals = ['🥇','🥈','🥉'];
+      return `<div class="lb-row">
+        <span class="rank">${medals[i] || (i+1)}</span>
+        <span style="flex:1;font-size:14px;${u.username===user?'font-weight:700;':''}">${u.display_name}${u.username===user?' (ฉัน)':''}</span>
+        <span style="font-size:16px;font-weight:700;">${u.score} แต้ม</span>
+      </div>`;
+    }).join('') + '</div>';
+  } catch(e) { el.innerHTML = '<div class="empty">โหลดไม่สำเร็จ กรุณาลองใหม่</div>'; }
+}
+
+async function importAllMatches() {
+  if (!confirm('Import โปรแกรมบอลโลก 2026 ทั้งหมด 104 แมตช์?\nแมตช์จะถูกปิดทายไว้ก่อน Admin เปิดเองได้ค่ะ')) return;
+  const btn = document.getElementById('btn-import');
+  const status = document.getElementById('import-status');
+  btn.disabled = true;
+  btn.textContent = 'กำลัง Import...';
+  status.style.display = '';
+  status.style.color = '#888';
+  status.textContent = 'กำลังเพิ่มแมตช์...';
+
+  const allMatches = [
+    // GROUP STAGE (เวลาไทย GMT+7)
+    {home:'🇲🇽 เม็กซิโก',away:'🇿🇦 แอฟริกาใต้',date:'11 มิ.ย. 04:00',group:'Group A',datetime:'2026-06-11T04:00'},
+    {home:'🇰🇷 เกาหลีใต้',away:'TBD',date:'12 มิ.ย. 11:00',group:'Group A',datetime:'2026-06-12T11:00'},
+    {home:'🇨🇦 แคนาดา',away:'TBD',date:'12 มิ.ย. 03:00',group:'Group B',datetime:'2026-06-12T03:00'},
+    {home:'🇺🇸 สหรัฐอเมริกา',away:'🇵🇾 ปารากวัย',date:'13 มิ.ย. 08:00',group:'Group D',datetime:'2026-06-13T08:00'},
+    {home:'🇶🇦 กาตาร์',away:'🇨🇭 สวิตเซอร์แลนด์',date:'13 มิ.ย. 22:00',group:'Group B',datetime:'2026-06-13T22:00'},
+    {home:'🇧🇷 บราซิล',away:'🇲🇦 โมร็อกโก',date:'14 มิ.ย. 01:00',group:'Group C',datetime:'2026-06-14T01:00'},
+    {home:'🇭🇹 เฮติ',away:'🏴󠁧󠁢󠁳󠁣󠁴󠁿 สก็อตแลนด์',date:'14 มิ.ย. 04:00',group:'Group C',datetime:'2026-06-14T04:00'},
+    {home:'🇦🇺 ออสเตรเลีย',away:'TBD',date:'14 มิ.ย. 07:00',group:'Group D',datetime:'2026-06-14T07:00'},
+    {home:'🇩🇪 เยอรมนี',away:'🇨🇼 กูราเซา',date:'14 มิ.ย. 20:00',group:'Group E',datetime:'2026-06-14T20:00'},
+    {home:'🇳🇱 เนเธอร์แลนด์',away:'🇯🇵 ญี่ปุ่น',date:'14 มิ.ย. 23:00',group:'Group F',datetime:'2026-06-14T23:00'},
+    {home:'🇨🇮 ไอวอรีโคสต์',away:'🇪🇨 เอกวาดอร์',date:'15 มิ.ย. 02:00',group:'Group E',datetime:'2026-06-15T02:00'},
+    {home:'TBD',away:'🇹🇳 ตูนิเซีย',date:'15 มิ.ย. 05:00',group:'Group F',datetime:'2026-06-15T05:00'},
+    {home:'🇪🇸 สเปน',away:'🇨🇻 กาบูเวร์ดี',date:'15 มิ.ย. 19:00',group:'Group H',datetime:'2026-06-15T19:00'},
+    {home:'🇧🇪 เบลเยียม',away:'🇪🇬 อียิปต์',date:'15 มิ.ย. 22:00',group:'Group G',datetime:'2026-06-15T22:00'},
+    {home:'🇸🇦 ซาอุดีอาระเบีย',away:'🇺🇾 อุรุกวัย',date:'16 มิ.ย. 01:00',group:'Group H',datetime:'2026-06-16T01:00'},
+    {home:'🇮🇷 อิหร่าน',away:'🇳🇿 นิวซีแลนด์',date:'16 มิ.ย. 04:00',group:'Group G',datetime:'2026-06-16T04:00'},
+    {home:'🇫🇷 ฝรั่งเศส',away:'🇸🇳 เซเนกัล',date:'16 มิ.ย. 22:00',group:'Group I',datetime:'2026-06-16T22:00'},
+    {home:'TBD',away:'🇳🇴 นอร์เวย์',date:'17 มิ.ย. 01:00',group:'Group I',datetime:'2026-06-17T01:00'},
+    {home:'🇦🇷 อาร์เจนตินา',away:'🇩🇿 แอลจีเรีย',date:'17 มิ.ย. 04:00',group:'Group J',datetime:'2026-06-17T04:00'},
+    {home:'🇦🇹 ออสเตรีย',away:'🇯🇴 จอร์แดน',date:'17 มิ.ย. 07:00',group:'Group J',datetime:'2026-06-17T07:00'},
+    {home:'🇵🇹 โปรตุเกส',away:'TBD',date:'17 มิ.ย. 20:00',group:'Group K',datetime:'2026-06-17T20:00'},
+    {home:'🏴󠁧󠁢󠁥󠁮󠁧󠁿 อังกฤษ',away:'🇭🇷 โครเอเชีย',date:'17 มิ.ย. 23:00',group:'Group L',datetime:'2026-06-17T23:00'},
+    {home:'🇬🇭 กานา',away:'🇵🇦 ปานามา',date:'18 มิ.ย. 02:00',group:'Group L',datetime:'2026-06-18T02:00'},
+    {home:'🇺🇿 อุซเบกิสถาน',away:'🇨🇴 โคลอมเบีย',date:'18 มิ.ย. 05:00',group:'Group K',datetime:'2026-06-18T05:00'},
+    {home:'TBD',away:'🇿🇦 แอฟริกาใต้',date:'18 มิ.ย. 19:00',group:'Group A',datetime:'2026-06-18T19:00'},
+    {home:'🇨🇭 สวิตเซอร์แลนด์',away:'TBD',date:'18 มิ.ย. 22:00',group:'Group B',datetime:'2026-06-18T22:00'},
+    {home:'🇨🇦 แคนาดา',away:'🇶🇦 กาตาร์',date:'19 มิ.ย. 01:00',group:'Group B',datetime:'2026-06-19T01:00'},
+    {home:'🇲🇽 เม็กซิโก',away:'🇰🇷 เกาหลีใต้',date:'19 มิ.ย. 04:00',group:'Group A',datetime:'2026-06-19T04:00'},
+    {home:'🇺🇸 สหรัฐอเมริกา',away:'🇦🇺 ออสเตรเลีย',date:'19 มิ.ย. 22:00',group:'Group D',datetime:'2026-06-19T22:00'},
+    {home:'🏴󠁧󠁢󠁳󠁣󠁴󠁿 สก็อตแลนด์',away:'🇲🇦 โมร็อกโก',date:'20 มิ.ย. 01:00',group:'Group C',datetime:'2026-06-20T01:00'},
+    {home:'🇧🇷 บราซิล',away:'🇭🇹 เฮติ',date:'20 มิ.ย. 04:00',group:'Group C',datetime:'2026-06-20T04:00'},
+    {home:'TBD',away:'🇵🇾 ปารากวัย',date:'20 มิ.ย. 07:00',group:'Group D',datetime:'2026-06-20T07:00'},
+    {home:'🇳🇱 เนเธอร์แลนด์',away:'TBD',date:'20 มิ.ย. 20:00',group:'Group F',datetime:'2026-06-20T20:00'},
+    {home:'🇩🇪 เยอรมนี',away:'🇨🇮 ไอวอรีโคสต์',date:'20 มิ.ย. 23:00',group:'Group E',datetime:'2026-06-20T23:00'},
+    {home:'🇪🇨 เอกวาดอร์',away:'🇨🇼 กูราเซา',date:'21 มิ.ย. 03:00',group:'Group E',datetime:'2026-06-21T03:00'},
+    {home:'🇹🇳 ตูนิเซีย',away:'🇯🇵 ญี่ปุ่น',date:'21 มิ.ย. 07:00',group:'Group F',datetime:'2026-06-21T07:00'},
+    {home:'🇪🇸 สเปน',away:'🇸🇦 ซาอุดีอาระเบีย',date:'21 มิ.ย. 19:00',group:'Group H',datetime:'2026-06-21T19:00'},
+    {home:'🇧🇪 เบลเยียม',away:'🇮🇷 อิหร่าน',date:'21 มิ.ย. 22:00',group:'Group G',datetime:'2026-06-21T22:00'},
+    {home:'🇺🇾 อุรุกวัย',away:'🇨🇻 กาบูเวร์ดี',date:'22 มิ.ย. 01:00',group:'Group H',datetime:'2026-06-22T01:00'},
+    {home:'🇳🇿 นิวซีแลนด์',away:'🇪🇬 อียิปต์',date:'22 มิ.ย. 04:00',group:'Group G',datetime:'2026-06-22T04:00'},
+    {home:'🇦🇷 อาร์เจนตินา',away:'🇦🇹 ออสเตรีย',date:'22 มิ.ย. 20:00',group:'Group J',datetime:'2026-06-22T20:00'},
+    {home:'🇫🇷 ฝรั่งเศส',away:'TBD',date:'23 มิ.ย. 00:00',group:'Group I',datetime:'2026-06-23T00:00'},
+    {home:'🇳🇴 นอร์เวย์',away:'🇸🇳 เซเนกัล',date:'23 มิ.ย. 03:00',group:'Group I',datetime:'2026-06-23T03:00'},
+    {home:'🇯🇴 จอร์แดน',away:'🇩🇿 แอลจีเรีย',date:'23 มิ.ย. 06:00',group:'Group J',datetime:'2026-06-23T06:00'},
+    {home:'🇵🇹 โปรตุเกส',away:'🇺🇿 อุซเบกิสถาน',date:'23 มิ.ย. 20:00',group:'Group K',datetime:'2026-06-23T20:00'},
+    {home:'🏴󠁧󠁢󠁥󠁮󠁧󠁿 อังกฤษ',away:'🇬🇭 กานา',date:'23 มิ.ย. 23:00',group:'Group L',datetime:'2026-06-23T23:00'},
+    {home:'🇵🇦 ปานามา',away:'🇭🇷 โครเอเชีย',date:'24 มิ.ย. 02:00',group:'Group L',datetime:'2026-06-24T02:00'},
+    {home:'🇨🇴 โคลอมเบีย',away:'TBD',date:'24 มิ.ย. 05:00',group:'Group K',datetime:'2026-06-24T05:00'},
+    {home:'🇨🇭 สวิตเซอร์แลนด์',away:'🇨🇦 แคนาดา',date:'24 มิ.ย. 22:00',group:'Group B',datetime:'2026-06-24T22:00'},
+    {home:'TBD',away:'🇶🇦 กาตาร์',date:'24 มิ.ย. 22:00',group:'Group B',datetime:'2026-06-24T22:00'},
+    {home:'🏴󠁧󠁢󠁳󠁣󠁴󠁿 สก็อตแลนด์',away:'🇧🇷 บราซิล',date:'25 มิ.ย. 01:00',group:'Group C',datetime:'2026-06-25T01:00'},
+    {home:'🇲🇦 โมร็อกโก',away:'🇭🇹 เฮติ',date:'25 มิ.ย. 01:00',group:'Group C',datetime:'2026-06-25T01:00'},
+    {home:'TBD',away:'🇲🇽 เม็กซิโก',date:'25 มิ.ย. 04:00',group:'Group A',datetime:'2026-06-25T04:00'},
+    {home:'🇿🇦 แอฟริกาใต้',away:'🇰🇷 เกาหลีใต้',date:'25 มิ.ย. 04:00',group:'Group A',datetime:'2026-06-25T04:00'},
+    {home:'🇪🇨 เอกวาดอร์',away:'🇩🇪 เยอรมนี',date:'25 มิ.ย. 23:00',group:'Group E',datetime:'2026-06-25T23:00'},
+    {home:'🇨🇼 กูราเซา',away:'🇨🇮 ไอวอรีโคสต์',date:'25 มิ.ย. 23:00',group:'Group E',datetime:'2026-06-25T23:00'},
+    {home:'🇯🇵 ญี่ปุ่น',away:'TBD',date:'26 มิ.ย. 02:00',group:'Group F',datetime:'2026-06-26T02:00'},
+    {home:'🇹🇳 ตูนิเซีย',away:'🇳🇱 เนเธอร์แลนด์',date:'26 มิ.ย. 02:00',group:'Group F',datetime:'2026-06-26T02:00'},
+    {home:'TBD',away:'🇺🇸 สหรัฐอเมริกา',date:'26 มิ.ย. 05:00',group:'Group D',datetime:'2026-06-26T05:00'},
+    {home:'🇵🇾 ปารากวัย',away:'🇦🇺 ออสเตรเลีย',date:'26 มิ.ย. 05:00',group:'Group D',datetime:'2026-06-26T05:00'},
+    {home:'🇳🇴 นอร์เวย์',away:'🇫🇷 ฝรั่งเศส',date:'26 มิ.ย. 22:00',group:'Group I',datetime:'2026-06-26T22:00'},
+    {home:'🇸🇳 เซเนกัล',away:'TBD',date:'26 มิ.ย. 22:00',group:'Group I',datetime:'2026-06-26T22:00'},
+    {home:'🇨🇻 กาบูเวร์ดี',away:'🇸🇦 ซาอุดีอาระเบีย',date:'27 มิ.ย. 03:00',group:'Group H',datetime:'2026-06-27T03:00'},
+    {home:'🇺🇾 อุรุกวัย',away:'🇪🇸 สเปน',date:'27 มิ.ย. 03:00',group:'Group H',datetime:'2026-06-27T03:00'},
+    {home:'🇪🇬 อียิปต์',away:'🇮🇷 อิหร่าน',date:'27 มิ.ย. 06:00',group:'Group G',datetime:'2026-06-27T06:00'},
+    {home:'🇳🇿 นิวซีแลนด์',away:'🇧🇪 เบลเยียม',date:'27 มิ.ย. 06:00',group:'Group G',datetime:'2026-06-27T06:00'},
+    {home:'🇵🇦 ปานามา',away:'🏴󠁧󠁢󠁥󠁮󠁧󠁿 อังกฤษ',date:'28 มิ.ย. 00:00',group:'Group L',datetime:'2026-06-28T00:00'},
+    {home:'🇭🇷 โครเอเชีย',away:'🇬🇭 กานา',date:'28 มิ.ย. 00:00',group:'Group L',datetime:'2026-06-28T00:00'},
+    {home:'🇨🇴 โคลอมเบีย',away:'🇵🇹 โปรตุเกส',date:'28 มิ.ย. 02:30',group:'Group K',datetime:'2026-06-28T02:30'},
+    {home:'TBD',away:'🇺🇿 อุซเบกิสถาน',date:'28 มิ.ย. 02:30',group:'Group K',datetime:'2026-06-28T02:30'},
+    {home:'🇩🇿 แอลจีเรีย',away:'🇦🇹 ออสเตรีย',date:'28 มิ.ย. 05:00',group:'Group J',datetime:'2026-06-28T05:00'},
+    {home:'🇯🇴 จอร์แดน',away:'🇦🇷 อาร์เจนตินา',date:'28 มิ.ย. 05:00',group:'Group J',datetime:'2026-06-28T05:00'},
+    // ROUND OF 32
+    {home:'Round of 32',away:'Match 1',date:'28 มิ.ย.',group:'Round of 32',datetime:'2026-06-29T02:00'},
+    {home:'Round of 32',away:'Match 2',date:'29 มิ.ย.',group:'Round of 32',datetime:'2026-06-29T20:00'},
+    {home:'Round of 32',away:'Match 3',date:'29 มิ.ย.',group:'Round of 32',datetime:'2026-06-29T23:30'},
+    {home:'Round of 32',away:'Match 4',date:'29 มิ.ย.',group:'Round of 32',datetime:'2026-06-30T04:00'},
+    {home:'Round of 32',away:'Match 5',date:'30 มิ.ย.',group:'Round of 32',datetime:'2026-06-30T20:00'},
+    {home:'Round of 32',away:'Match 6',date:'30 มิ.ย.',group:'Round of 32',datetime:'2026-07-01T00:00'},
+    {home:'Round of 32',away:'Match 7',date:'30 มิ.ย.',group:'Round of 32',datetime:'2026-07-01T04:00'},
+    {home:'Round of 32',away:'Match 8',date:'1 ก.ค.',group:'Round of 32',datetime:'2026-07-01T19:00'},
+    {home:'Round of 32',away:'Match 9',date:'1 ก.ค.',group:'Round of 32',datetime:'2026-07-01T23:00'},
+    {home:'Round of 32',away:'Match 10',date:'1 ก.ค.',group:'Round of 32',datetime:'2026-07-02T03:00'},
+    {home:'Round of 32',away:'Match 11',date:'2 ก.ค.',group:'Round of 32',datetime:'2026-07-02T20:00'},
+    {home:'Round of 32',away:'Match 12',date:'2 ก.ค.',group:'Round of 32',datetime:'2026-07-03T00:00'},
+    {home:'Round of 32',away:'Match 13',date:'2 ก.ค.',group:'Round of 32',datetime:'2026-07-03T04:00'},
+    {home:'Round of 32',away:'Match 14',date:'3 ก.ค.',group:'Round of 32',datetime:'2026-07-03T21:00'},
+    {home:'Round of 32',away:'Match 15',date:'3 ก.ค.',group:'Round of 32',datetime:'2026-07-04T01:00'},
+    {home:'Round of 32',away:'Match 16',date:'3 ก.ค.',group:'Round of 32',datetime:'2026-07-04T04:30'},
+    // ROUND OF 16
+    {home:'Round of 16',away:'Match 1',date:'4 ก.ค.',group:'Round of 16',datetime:'2026-07-05T00:00'},
+    {home:'Round of 16',away:'Match 2',date:'4 ก.ค.',group:'Round of 16',datetime:'2026-07-05T04:00'},
+    {home:'Round of 16',away:'Match 3',date:'5 ก.ค.',group:'Round of 16',datetime:'2026-07-05T23:00'},
+    {home:'Round of 16',away:'Match 4',date:'5 ก.ค.',group:'Round of 16',datetime:'2026-07-06T03:00'},
+    {home:'Round of 16',away:'Match 5',date:'6 ก.ค.',group:'Round of 16',datetime:'2026-07-07T00:00'},
+    {home:'Round of 16',away:'Match 6',date:'6 ก.ค.',group:'Round of 16',datetime:'2026-07-07T03:00'},
+    {home:'Round of 16',away:'Match 7',date:'7 ก.ค.',group:'Round of 16',datetime:'2026-07-07T19:00'},
+    {home:'Round of 16',away:'Match 8',date:'7 ก.ค.',group:'Round of 16',datetime:'2026-07-07T23:00'},
+    // QUARTERFINALS
+    {home:'QF',away:'Match 1',date:'9 ก.ค.',group:'Quarterfinal',datetime:'2026-07-09T23:00'},
+    {home:'QF',away:'Match 2',date:'10 ก.ค.',group:'Quarterfinal',datetime:'2026-07-10T22:00'},
+    {home:'QF',away:'Match 3',date:'11 ก.ค.',group:'Quarterfinal',datetime:'2026-07-12T00:00'},
+    {home:'QF',away:'Match 4',date:'11 ก.ค.',group:'Quarterfinal',datetime:'2026-07-12T04:00'},
+    // SEMIFINALS
+    {home:'SF',away:'Match 1',date:'14 ก.ค.',group:'Semifinal',datetime:'2026-07-15T00:00'},
+    {home:'SF',away:'Match 2',date:'15 ก.ค.',group:'Semifinal',datetime:'2026-07-15T23:00'},
+    // BRONZE + FINAL
+    {home:'อันดับ 3',away:'อันดับ 4',date:'18 ก.ค.',group:'Bronze Medal',datetime:'2026-07-19T00:00'},
+    {home:'แชมป์',away:'รองแชมป์',date:'19 ก.ค. 03:00',group:'Final',datetime:'2026-07-19T22:00'},
+  ];
+
+  let success = 0;
+  for (let i = 0; i < allMatches.length; i++) {
+    const m = allMatches[i];
+    status.textContent = `กำลัง Import แมตช์ที่ ${i+1}/${allMatches.length}...`;
+    try {
+      await apiPost({ action: 'addMatch', home: m.home, away: m.away, date: m.date, group: m.group, open: false, datetime: m.datetime || '' });
+      success++;
+    } catch(e) {}
+    await new Promise(r => setTimeout(r, 200));
+  }
+
+  matches = await api({ action: 'getMatches' });
+  renderAdminList();
+  status.style.color = '#2e7d32';
+  status.textContent = `Import สำเร็จ ${success}/${allMatches.length} แมตช์ค่ะ`;
+  btn.disabled = false;
+  btn.textContent = '⚽ Import 104 แมตช์';
+}
+
+async function adminAdd() {
+  const home = document.getElementById('a-home').value.trim();
+  const away = document.getElementById('a-away').value.trim();
+  const date = document.getElementById('a-date').value.trim();
+  const group = document.getElementById('a-group').value.trim();
+  const datetime = document.getElementById('a-datetime').value;
+  const err = document.getElementById('admin-err');
+  if (!home || !away || !date) { err.style.display=''; err.textContent='กรุณากรอกข้อมูลให้ครบ'; return; }
+  err.style.display = 'none';
+  try {
+    await apiPost({ action: 'addMatch', home, away, date, group: group || 'Group Stage', datetime });
+    ['a-home','a-away','a-date','a-group','a-datetime'].forEach(id => document.getElementById(id).value = '');
+    matches = await api({ action: 'getMatches' });
+    renderAdminList();
+  } catch(e) { err.style.display=''; err.textContent='เพิ่มแมตช์ไม่สำเร็จ'; }
+}
+
+async function adminToggle(id, open) {
+  await apiPost({ action: 'updateMatch', id, open });
+  matches = await api({ action: 'getMatches' });
+  renderAdminList();
+}
+
+async function adminResult(id, home, away) {
+  const h = parseInt(prompt('สกอร์ ' + home + ':'));
+  const a = parseInt(prompt('สกอร์ ' + away + ':'));
+  if (isNaN(h) || isNaN(a)) return;
+  await apiPost({ action: 'updateMatch', id, result_home: h, result_away: a });
+  matches = await api({ action: 'getMatches' });
+  renderAdminList();
+}
+
+async function adminEditTeams(id, currentHome, currentAway) {
+  const newHome = prompt('ชื่อทีมเจ้าบ้าน:', currentHome);
+  if (newHome === null) return;
+  const newAway = prompt('ชื่อทีมเยือน:', currentAway);
+  if (newAway === null) return;
+  await apiPost({ action: 'updateMatch', id, home: newHome.trim(), away: newAway.trim() });
+  matches = await api({ action: 'getMatches' });
+  renderAdminList();
+}
+
+async function adminDelete(id) {
+  if (!confirm('ลบแมตช์นี้?')) return;
+  await apiPost({ action: 'deleteMatch', id });
+  matches = await api({ action: 'getMatches' });
+  renderAdminList();
+}
+
+function renderAdminList() {
+  const el = document.getElementById('admin-list');
+  if (!matches.length) { el.innerHTML = ''; return; }
+  el.innerHTML = matches.map(m => {
+    const hasResult = m.result_home !== "" && m.result_home !== null && m.result_home !== undefined;
+    return `<div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;gap:8px;">
+        <div>
+          <div style="font-weight:600;font-size:14px;">${m.home} vs ${m.away}</div>
+          <div style="font-size:12px;color:#888;margin-top:2px;">${m.group} • ${m.date}</div>
+        </div>
+        <div>${hasResult ? `<span class="badge badge-done">ผล: ${m.result_home}-${m.result_away}</span>` : m.open ? `<span class="badge badge-open">เปิด</span>` : `<span class="badge badge-closed">ปิด</span>`}</div>
+      </div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;">
+        ${!hasResult && m.open ? `<button class="btn sm" onclick="adminToggle('${m.id}', false)">ปิดทาย</button>` : ''}
+        ${!hasResult && !m.open ? `<button class="btn sm" onclick="adminToggle('${m.id}', true)">เปิดทาย</button>` : ''}
+        <button class="btn sm" onclick="adminEditTeams('${m.id}','${m.home}','${m.away}')">✏️ แก้ชื่อทีม</button>
+        ${!hasResult ? `<button class="btn sm primary" onclick="adminResult('${m.id}','${m.home}','${m.away}')">🏆 ใส่ผล</button>` : ''}
+        <button class="btn sm danger" onclick="adminDelete('${m.id}')">ลบ</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+document.getElementById('screen-admin').addEventListener('click', function(e) {
+  if (e.target.closest('#screen-admin') && !document.getElementById('admin-list').innerHTML) {
+    renderAdminList();
+  }
+});
+
+document.getElementById('btn-admin').addEventListener('click', function() {
+  renderAdminList();
+});
+</script>
+</body>
+</html>
