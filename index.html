@@ -232,7 +232,7 @@ input:focus { border-color: #1a1a1a; }
 </div>
 
 <script>
-const API = "https://script.google.com/macros/s/AKfycbzEAYKGV-HKxCZU-wafzjL7QM1PY94S4QQwcAlVlt0cGcXDIkPgmX1QZUwDh4bnI1Gy/exec";
+const API = "https://script.google.com/macros/s/AKfycbwlB9jvydPZ61BwnVKXy6HR3fjS6WD9ecmMA81y75Lbg4Fyny5O0EHq2VYHb-ZH3bS_/exec";
 const ADMIN = "admin";
 const ADMIN_PASSWORD = "987654321";
 
@@ -727,6 +727,9 @@ async function renderBonus() {
 
   // ===== ส่วนที่ 2: ทาย Top 4 =====
   const isTop4Open = top4Settings.open && now < TOP4_DEADLINE;
+  const hasTop4Result = top4Settings.result && top4Settings.result.length > 0;
+  const myTeams = myTop4Pick.teams || [];
+  const correctCount = hasTop4Result ? myTeams.filter(t => top4Settings.result.includes(t)).length : 0;
 
   html += `<div class="card">
     <div style="font-size:15px;font-weight:500;margin-bottom:4px;">🏅 ทาย Top 4</div>
