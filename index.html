@@ -92,17 +92,21 @@ input:focus { border-color: #1a1a1a; }
   <div class="container">
     <div class="nav">
       <span class="nav-title" id="main-greeting">สวัสดี ⚽</span>
-      <button class="btn sm" id="btn-admin" style="display:none" onclick="showScreen('admin'); renderAdminList();">⚙️ Admin</button>
+      <button class="btn sm" id="btn-admin" style="display:none" onclick="showScreen('admin'); renderAdminList(); initAdminTop4Select();">⚙️ Admin</button>
       <button class="btn sm danger" onclick="doLogout()">ออก</button>
     </div>
     <div class="tab-bar">
       <button class="tab active" onclick="switchTab('matches', this)">แมตช์</button>
       <button class="tab" onclick="switchTab('picks', this)">ของฉัน</button>
       <button class="tab" onclick="switchTab('leaderboard', this)">ตาราง</button>
+      <button class="tab" onclick="switchTab('bonus', this)">🎯 โบนัส</button>
+      <button class="tab" onclick="switchTab('cards', this)">🃏 การ์ด</button>
     </div>
     <div id="tab-matches"><div class="spinner">⏳ กำลังโหลด...</div></div>
     <div id="tab-picks" style="display:none"></div>
     <div id="tab-leaderboard" style="display:none"></div>
+    <div id="tab-bonus" style="display:none"></div>
+    <div id="tab-cards" style="display:none"></div>
   </div>
 </div>
 
@@ -145,12 +149,90 @@ input:focus { border-color: #1a1a1a; }
       <button class="btn primary" onclick="adminAdd()">+ เพิ่มแมตช์</button>
       <div id="admin-err" class="err" style="display:none;"></div>
     </div>
+    <div class="card">
+      <div style="font-size: 15px; font-weight: 600; margin-bottom: 12px;">🃏 เพิ่มการ์ดพลังให้สมาชิก</div>
+      <div class="label">Username</div>
+      <input type="text" id="card-username" placeholder="ใส่ Username..." />
+      <div class="label">ประเภทการ์ด</div>
+      <select id="card-type">
+        <option value="double">⚡ Double (คะแนน x2)</option>
+        <option value="triple">🔮 Triple (คะแนน x3)</option>
+        <option value="shield">🛡️ Shield (ป้องกันแพ้)</option>
+        <option value="champion_change">🔄 Champion Change (เปลี่ยนทายแชมป์)</option>
+      </select>
+      <button class="btn primary" onclick="adminAddCard()">+ เพิ่มการ์ด</button>
+      <div id="card-err" class="err" style="display:none;"></div>
+    </div>
+    <div class="card">
+      <div style="font-size: 15px; font-weight: 600; margin-bottom: 8px;">🏆 ตั้งผลแชมป์</div>
+      <div class="label">ทีมแชมป์</div>
+      <select id="champion-result-select">
+        <option value="">-- เลือกทีมแชมป์ --</option>
+        <option value="ฝรั่งเศส">ฝรั่งเศส</option><option value="สเปน">สเปน</option>
+        <option value="อาร์เจนตินา">อาร์เจนตินา</option><option value="อังกฤษ">อังกฤษ</option>
+        <option value="โปรตุเกส">โปรตุเกส</option><option value="บราซิล">บราซิล</option>
+        <option value="เนเธอร์แลนด์">เนเธอร์แลนด์</option><option value="โมร็อกโก">โมร็อกโก</option>
+        <option value="เบลเยียม">เบลเยียม</option><option value="เยอรมนี">เยอรมนี</option>
+        <option value="โครเอเชีย">โครเอเชีย</option><option value="โคลอมเบีย">โคลอมเบีย</option>
+        <option value="เซเนกัล">เซเนกัล</option><option value="เม็กซิโก">เม็กซิโก</option>
+        <option value="สหรัฐอเมริกา">สหรัฐอเมริกา</option><option value="อุรุกวัย">อุรุกวัย</option>
+        <option value="ญี่ปุ่น">ญี่ปุ่น</option><option value="สวิตเซอร์แลนด์">สวิตเซอร์แลนด์</option>
+        <option value="อิหร่าน">อิหร่าน</option><option value="ตุรกี">ตุรกี</option>
+        <option value="เอกวาดอร์">เอกวาดอร์</option><option value="ออสเตรีย">ออสเตรีย</option>
+        <option value="เกาหลีใต้">เกาหลีใต้</option><option value="ออสเตรเลีย">ออสเตรเลีย</option>
+        <option value="แอลจีเรีย">แอลจีเรีย</option><option value="อียิปต์">อียิปต์</option>
+        <option value="แคนาดา">แคนาดา</option><option value="นอร์เวย์">นอร์เวย์</option>
+        <option value="ปานามา">ปานามา</option><option value="ไอวอรีโคสต์">ไอวอรีโคสต์</option>
+        <option value="สวีเดน">สวีเดน</option><option value="ปารากวัย">ปารากวัย</option>
+        <option value="เช็กเกีย">เช็กเกีย</option><option value="สกอตแลนด์">สกอตแลนด์</option>
+        <option value="ตูนิเซีย">ตูนิเซีย</option><option value="ดีอาร์ คองโก">ดีอาร์ คองโก</option>
+        <option value="อุซเบกิสถาน">อุซเบกิสถาน</option><option value="กาตาร์">กาตาร์</option>
+        <option value="อิรัก">อิรัก</option><option value="แอฟริกาใต้">แอฟริกาใต้</option>
+        <option value="ซาอุดีอาระเบีย">ซาอุดีอาระเบีย</option><option value="จอร์แดน">จอร์แดน</option>
+        <option value="บอสเนีย">บอสเนีย</option><option value="กาบูเวร์ดี">กาบูเวร์ดี</option>
+        <option value="กานา">กานา</option><option value="กูราเซา">กูราเซา</option>
+        <option value="เฮติ">เฮติ</option><option value="นิวซีแลนด์">นิวซีแลนด์</option>
+      </select>
+      <button class="btn primary" onclick="adminSetChampion()">🏆 บันทึกผลแชมป์ (+5 แต้ม)</button>
+      <div id="champion-admin-err" class="err" style="display:none;"></div>
+    </div>
+    <div class="card">
+      <div style="font-size: 15px; font-weight: 600; margin-bottom: 12px;">🏅 จัดการทาย Top 4</div>
+      <div style="display:flex;gap:8px;margin-bottom:10px;">
+        <button class="btn sm" onclick="adminTop4Toggle(true)">เปิดทาย Top 4</button>
+        <button class="btn sm danger" onclick="adminTop4Toggle(false)">ปิดทาย Top 4</button>
+      </div>
+      <div class="label">บันทึก Top 4 จริง (เลือกทีละทีม)</div>
+      <select id="admin-top4-select" style="margin-bottom:8px;">
+        <option value="">-- เลือกทีม --</option>
+      </select>
+      <div id="admin-top4-result" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;"></div>
+      <button class="btn primary" onclick="adminSaveTop4Result()">🏅 บันทึกผล Top 4</button>
+      <div id="top4-admin-err" class="err" style="display:none;"></div>
+    </div>
+      <div class="label">เลือกกลุ่ม</div>
+      <select id="admin-group-select" onchange="updateAdminGroupTeams()" style="margin-bottom:10px;">
+        <option value="">-- เลือกกลุ่ม --</option>
+        <option>Group A</option><option>Group B</option><option>Group C</option>
+        <option>Group D</option><option>Group E</option><option>Group F</option>
+        <option>Group G</option><option>Group H</option><option>Group I</option>
+        <option>Group J</option><option>Group K</option><option>Group L</option>
+      </select>
+      <div style="display:flex;gap:8px;margin-bottom:10px;">
+        <button class="btn sm" onclick="adminGroupToggle(true)">เปิดทาย</button>
+        <button class="btn sm danger" onclick="adminGroupToggle(false)">ปิดทาย</button>
+      </div>
+      <div class="label">บันทึกทีมที่ 1 ของกลุ่ม</div>
+      <select id="admin-group-winner" style="margin-bottom:10px;"><option value="">-- เลือกทีม --</option></select>
+      <button class="btn primary" onclick="adminSetGroupWinner()">🥇 บันทึกผลที่ 1</button>
+      <div id="group-admin-err" class="err" style="display:none;"></div>
+    </div>
     <div id="admin-list"></div>
   </div>
 </div>
 
 <script>
-const API = "https://script.google.com/macros/s/AKfycbz8NChZQNCilJ_9TldD7LydeVwozENYQRzc4osB7l5-sh0gUClrUFnMs41z2OF_31_u/exec";
+const API = "https://script.google.com/macros/s/AKfycbzEAYKGV-HKxCZU-wafzjL7QM1PY94S4QQwcAlVlt0cGcXDIkPgmX1QZUwDh4bnI1Gy/exec";
 const ADMIN = "admin";
 const ADMIN_PASSWORD = "987654321";
 
@@ -158,8 +240,23 @@ let user = null;
 let displayName = null;
 let matches = [];
 let myPicks = {};
+let myCards = [];
+let championPick = null;
 let selTeam = null;
+let selCard = null;
 let curMatchId = null;
+
+const CHAMPION_DEADLINE = new Date('2026-06-28T23:59:00+07:00');
+const ALL_TEAMS = [
+  'ฝรั่งเศส','สเปน','อาร์เจนตินา','อังกฤษ','โปรตุเกส','บราซิล',
+  'เนเธอร์แลนด์','โมร็อกโก','เบลเยียม','เยอรมนี','โครเอเชีย','โคลอมเบีย',
+  'เซเนกัล','เม็กซิโก','สหรัฐอเมริกา','อุรุกวัย','ญี่ปุ่น','สวิตเซอร์แลนด์',
+  'อิหร่าน','ตุรกี','เอกวาดอร์','ออสเตรีย','เกาหลีใต้','ออสเตรเลีย',
+  'แอลจีเรีย','อียิปต์','แคนาดา','นอร์เวย์','ปานามา','ไอวอรีโคสต์',
+  'สวีเดน','ปารากวัย','เช็กเกีย','สกอตแลนด์','ตูนิเซีย','ดีอาร์ คองโก',
+  'อุซเบกิสถาน','กาตาร์','อิรัก','แอฟริกาใต้','ซาอุดีอาระเบีย','จอร์แดน',
+  'บอสเนีย','กาบูเวร์ดี','กานา','กูราเซา','เฮติ','นิวซีแลนด์'
+];
 
 function switchAuthTab(tab) {
   document.getElementById('form-login').style.display = tab === 'login' ? '' : 'none';
@@ -176,12 +273,14 @@ function showScreen(id) {
 function switchTab(tab, el) {
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   el.classList.add('active');
-  ['matches','picks','leaderboard'].forEach(t => {
+  ['matches','picks','leaderboard','bonus','cards'].forEach(t => {
     document.getElementById('tab-' + t).style.display = t === tab ? '' : 'none';
   });
   if (tab === 'matches') renderMatches();
   if (tab === 'picks') renderPicks();
   if (tab === 'leaderboard') renderLeaderboard();
+  if (tab === 'bonus') renderBonus();
+  if (tab === 'cards') renderCards();
 }
 
 async function api(params) {
@@ -283,12 +382,16 @@ function doLogout() {
 async function loadData() {
   document.getElementById('tab-matches').innerHTML = '<div class="spinner">⏳ กำลังโหลดข้อมูล...</div>';
   try {
-    const [m, p] = await Promise.all([
+    const [m, p, c, ch] = await Promise.all([
       api({ action: 'getMatches' }),
-      api({ action: 'getPicks', user })
+      api({ action: 'getPicks', user }),
+      api({ action: 'getCards', username: user }),
+      api({ action: 'getChampionPick', username: user })
     ]);
     matches = m;
     myPicks = p;
+    myCards = Array.isArray(c) ? c : [];
+    championPick = ch && ch.team ? ch : null;
   } catch(e) {
     document.getElementById('tab-matches').innerHTML = '<div class="empty">โหลดข้อมูลไม่สำเร็จ กรุณาลองใหม่</div>';
   }
@@ -328,9 +431,9 @@ function renderMatches() {
       </div>
       <div class="match-teams">${m.home} <span style="color:#aaa;font-weight:400;">vs</span> ${m.away}</div>
       ${m.odds ? `<div style="display:flex;gap:4px;margin-top:6px;margin-bottom:2px;">
-        <span style="flex:1;font-size:11px;color:#1565c0;background:#e3f2fd;border-radius:4px;padding:2px 6px;text-align:center;">${m.home.split(' ').pop()} x${m.odds.home.toFixed(1)}</span>
-        <span style="font-size:11px;color:#666;background:#f5f5f5;border-radius:4px;padding:2px 6px;text-align:center;">เสมอ x${m.odds.draw.toFixed(1)}</span>
-        <span style="flex:1;font-size:11px;color:#1565c0;background:#e3f2fd;border-radius:4px;padding:2px 6px;text-align:center;">${m.away.split(' ').pop()} x${m.odds.away.toFixed(1)}</span>
+        <span style="flex:1;font-size:11px;color:#1565c0;background:#e3f2fd;border-radius:4px;padding:2px 6px;text-align:center;">${m.home.split(' ').pop()} ${m.odds.home.toFixed(1)} แต้ม</span>
+        <span style="font-size:11px;color:#666;background:#f5f5f5;border-radius:4px;padding:2px 6px;text-align:center;">เสมอ ${m.odds.draw.toFixed(1)} แต้ม</span>
+        <span style="flex:1;font-size:11px;color:#1565c0;background:#e3f2fd;border-radius:4px;padding:2px 6px;text-align:center;">${m.away.split(' ').pop()} ${m.odds.away.toFixed(1)} แต้ม</span>
       </div>` : ''}
       ${pickInfo}
       ${canPick ? `<button class="btn sm" style="margin-top:10px;" onclick="openPredict('${m.id}')">🎯 ${p ? 'แก้ไขการทาย' : 'ทายผล'}</button>` : ''}
@@ -342,11 +445,20 @@ function openPredict(matchId) {
   const m = matches.find(x => x.id === matchId);
   curMatchId = matchId;
   selTeam = null;
+  selCard = null;
   const p = myPicks[matchId];
   const odds = m.odds || { home: 1.5, away: 2.0, draw: 2.5 };
+  const availableCards = getAvailableCards();
+  const cardHTML = availableCards.length ? `
+    <div class="label" style="margin-bottom:8px;font-size:13px;">🃏 การ์ดพลังพิเศษ (มี ${availableCards.length} ใบ)</div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;">
+      <button class="btn sm primary" id="card-none" onclick="selectCard(null)">ไม่ใช้การ์ด</button>
+      ${[...new Set(availableCards.map(c => c.card_type))].map(type => `<button class="btn sm" id="card-${type}" onclick="selectCard('${type}')">${getCardLabel(type)}</button>`).join('')}
+    </div>` : '';
   document.getElementById('predict-title').textContent = m.home + ' vs ' + m.away;
   document.getElementById('predict-content').innerHTML = `
     <div class="card">
+      ${cardHTML}
       <div class="label" style="margin-bottom:10px;font-size:13px;">เลือกทีมที่คิดว่าจะชนะ</div>
       <div style="display:flex;gap:8px;margin-bottom:6px;">
         <button class="team-btn ${p&&p.team===m.home?'selected':''}" id="btn-home" onclick="selectTeam('${m.home}')">${m.home}</button>
@@ -354,12 +466,12 @@ function openPredict(matchId) {
         <button class="team-btn ${p&&p.team===m.away?'selected':''}" id="btn-away" onclick="selectTeam('${m.away}')">${m.away}</button>
       </div>
       <div style="display:flex;gap:8px;margin-bottom:20px;">
-        <div style="flex:1;text-align:center;font-size:12px;color:#1565c0;font-weight:600;">x${odds.home.toFixed(1)}</div>
-        <div style="flex:0.5;text-align:center;font-size:12px;color:#1565c0;font-weight:600;">x${odds.draw.toFixed(1)}</div>
-        <div style="flex:1;text-align:center;font-size:12px;color:#1565c0;font-weight:600;">x${odds.away.toFixed(1)}</div>
+        <div style="flex:1;text-align:center;font-size:12px;color:#1565c0;font-weight:600;">${odds.home.toFixed(1)} แต้ม</div>
+        <div style="flex:0.5;text-align:center;font-size:12px;color:#1565c0;font-weight:600;">${odds.draw.toFixed(1)} แต้ม</div>
+        <div style="flex:1;text-align:center;font-size:12px;color:#1565c0;font-weight:600;">${odds.away.toFixed(1)} แต้ม</div>
       </div>
-      <div style="font-size:11px;color:#aaa;text-align:center;margin-bottom:16px;">คะแนน = 3 × odds | ทายสกอร์ถูก = +2 × odds</div>
-      <div class="label" style="margin-bottom:10px;font-size:13px;">ทายสกอร์ (โบนัส +2 × odds)</div>
+      <div style="font-size:11px;color:#aaa;text-align:center;margin-bottom:16px;">ทายถูก = แต้มตาม Odds | ทายสกอร์ถูกด้วย = +2 แต้มพิเศษ</div>
+      <div class="label" style="margin-bottom:10px;font-size:13px;">ทายสกอร์ (โบนัส +2 แต้ม)</div>
       <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px;">
         <div style="text-align:center;">
           <div style="font-size:11px;color:#888;margin-bottom:6px;">${m.home}</div>
@@ -391,16 +503,29 @@ function selectTeam(team) {
   else if (team === awayText) document.getElementById('btn-away')?.classList.add('selected');
 }
 
+function selectCard(type) {
+  selCard = type;
+  document.getElementById('card-none')?.classList.toggle('primary', !type);
+  document.getElementById('card-none')?.classList.toggle('sm', true);
+  ['double','triple','shield'].forEach(t => {
+    const btn = document.getElementById('card-' + t);
+    if (btn) { btn.classList.toggle('primary', t === type); }
+  });
+}
+
 async function savePick(matchId, home, away) {
   const err = document.getElementById('pick-err');
   const btn = document.getElementById('btn-save-pick');
   if (!selTeam) { err.style.display=''; err.textContent='กรุณาเลือกทีมก่อนค่ะ'; return; }
   const sh = parseInt(document.getElementById('sh').value) || 0;
   const sa = parseInt(document.getElementById('sa').value) || 0;
-  btn.textContent = '⏳ กำลังบันทึก...';
-  btn.disabled = true;
+  btn.textContent = '⏳ กำลังบันทึก...'; btn.disabled = true;
   try {
     await apiPost({ action: 'savePick', match_id: matchId, user, team: selTeam, score_home: sh, score_away: sa });
+    if (selCard) {
+      await apiPost({ action: 'useCard', username: user, card_type: selCard, match_id: matchId });
+      myCards = await api({ action: 'getCards', username: user });
+    }
     myPicks[matchId] = { team: selTeam, score_home: sh, score_away: sa };
     showScreen('main');
     renderMatches();
@@ -424,9 +549,11 @@ function renderPicks() {
       const actualTeam = rh > ra ? m.home : rh < ra ? m.away : 'เสมอ';
       const correct = p.team === actualTeam;
       const bonus = correct && parseInt(p.score_home) === rh && parseInt(p.score_away) === ra;
-      if (bonus) { pts = '+5 pts'; cls = 'pts-bonus'; }
-      else if (correct) { pts = '+3 pts'; cls = 'pts-correct'; }
-      else { pts = '0 pts'; cls = 'pts-wrong'; }
+      const odds = m.odds || { home: 1.5, away: 2.0, draw: 2.5 };
+      const teamOdds = p.team === m.home ? odds.home : p.team === m.away ? odds.away : odds.draw;
+      if (bonus) { pts = `+${(teamOdds + 2).toFixed(1)} แต้ม`; cls = 'pts-bonus'; }
+      else if (correct) { pts = `+${teamOdds.toFixed(1)} แต้ม`; cls = 'pts-correct'; }
+      else { pts = '0 แต้ม'; cls = 'pts-wrong'; }
     }
     html += `<div class="pick-row">
       <div>
@@ -439,6 +566,277 @@ function renderPicks() {
   });
   html += '</div>';
   el.innerHTML = html;
+}
+
+let top4Settings = { result: [], open: false };
+let myTop4Pick = { teams: [] };
+const TOP4_DEADLINE = new Date('2026-06-28T23:59:00+07:00');
+const GROUP_DEADLINE = new Date('2026-06-14T23:59:00+07:00');
+
+function renderCards() {
+  const el = document.getElementById('tab-cards');
+  const cardInfo = {
+    'double':   { icon: '⚡', name: 'Double', desc: 'คะแนนแมตช์นั้น x2', color: '#fff8e1', border: '#f9a825', text: '#e65100' },
+    'triple':   { icon: '🔮', name: 'Triple', desc: 'คะแนนแมตช์นั้น x3', color: '#f3e5f5', border: '#8e24aa', text: '#6a1b9a' },
+    'shield':   { icon: '🛡️', name: 'Shield', desc: 'ทายผิดไม่เสียแต้ม', color: '#e8f5e9', border: '#388e3c', text: '#1b5e20' },
+    'champion_change': { icon: '🔄', name: 'Champion Change', desc: 'เปลี่ยนทายแชมป์ได้ (29 มิ.ย. - 18 ก.ค.)', color: '#e3f2fd', border: '#1565c0', text: '#0d47a1' }
+  };
+
+  const available = myCards.filter(c => !c.used);
+  const used = myCards.filter(c => c.used);
+
+  let html = '';
+
+  // สรุปการ์ดที่มีค่ะ
+  html += `<div class="card">
+    <div style="font-size:15px;font-weight:500;margin-bottom:12px;">🃏 การ์ดพลังพิเศษของฉัน</div>`;
+
+  if (myCards.length === 0) {
+    html += `<div style="text-align:center;color:#aaa;padding:20px 0;font-size:14px;">ยังไม่มีการ์ดค่ะ<br><span style="font-size:12px;">เข้าร่วมกิจกรรม Onsite เพื่อรับการ์ดค่ะ</span></div>`;
+  } else {
+    // การ์ดที่ยังไม่ได้ใช้ค่ะ
+    if (available.length > 0) {
+      html += `<div style="font-size:12px;color:#2e7d32;font-weight:500;margin-bottom:8px;">✅ ใช้งานได้ (${available.length} ใบ)</div>`;
+      const grouped = {};
+      available.forEach(c => { grouped[c.card_type] = (grouped[c.card_type] || 0) + 1; });
+      Object.keys(grouped).forEach(type => {
+        const info = cardInfo[type] || { icon: '🎴', name: type, desc: '', color: '#f5f5f5', border: '#ddd', text: '#333' };
+        html += `<div style="display:flex;align-items:center;gap:12px;padding:12px;border-radius:10px;border:1.5px solid ${info.border};background:${info.color};margin-bottom:8px;">
+          <div style="font-size:28px;">${info.icon}</div>
+          <div style="flex:1;">
+            <div style="font-weight:600;font-size:14px;color:${info.text};">${info.name}</div>
+            <div style="font-size:12px;color:${info.text};opacity:0.8;margin-top:2px;">${info.desc}</div>
+          </div>
+          <div style="background:${info.border};color:#fff;border-radius:99px;padding:2px 10px;font-size:13px;font-weight:600;">${grouped[type]} ใบ</div>
+        </div>`;
+      });
+    }
+
+    // การ์ดที่ใช้แล้วค่ะ
+    if (used.length > 0) {
+      html += `<div style="font-size:12px;color:#888;font-weight:500;margin-top:12px;margin-bottom:8px;">📭 ใช้แล้ว (${used.length} ใบ)</div>`;
+      used.forEach(c => {
+        const info = cardInfo[c.card_type] || { icon: '🎴', name: c.card_type, desc: '' };
+        const matchName = c.match_id === 'champion' ? 'ทายแชมป์' : c.match_id ? `แมตช์ ${c.match_id.replace('match_','')}` : '';
+        html += `<div style="display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;border:1px solid #e0e0e0;background:#fafafa;margin-bottom:6px;opacity:0.7;">
+          <div style="font-size:22px;filter:grayscale(1);">${info.icon}</div>
+          <div style="flex:1;">
+            <div style="font-size:13px;color:#888;text-decoration:line-through;">${info.name}</div>
+            ${matchName ? `<div style="font-size:11px;color:#aaa;margin-top:1px;">ใช้ที่: ${matchName}</div>` : ''}
+          </div>
+          <span style="font-size:11px;color:#bbb;">ใช้แล้ว</span>
+        </div>`;
+      });
+    }
+  }
+  html += `</div>`;
+
+  // อธิบายการใช้งานการ์ดค่ะ
+  html += `<div class="card">
+    <div style="font-size:14px;font-weight:500;margin-bottom:10px;">📖 วิธีใช้การ์ด</div>
+    <div style="font-size:13px;color:#666;line-height:1.8;">
+      <div style="margin-bottom:6px;">⚡ <b>Double / 🔮 Triple / 🛡️ Shield</b><br>
+        <span style="font-size:12px;color:#888;">→ กด ทายผล ที่แมตช์ใดก็ได้ แล้วเลือกการ์ดก่อนบันทึกค่ะ</span></div>
+      <div>🔄 <b>Champion Change</b><br>
+        <span style="font-size:12px;color:#888;">→ ไปที่ Tab 🎯 โบนัส → ทายแชมป์ แล้วกดเปลี่ยนทายได้ช่วง 29 มิ.ย. - 18 ก.ค. ค่ะ</span></div>
+    </div>
+  </div>`;
+
+  el.innerHTML = html;
+}
+
+async function renderBonus() {
+  const el = document.getElementById('tab-bonus');
+  el.innerHTML = '<div class="spinner">⏳ กำลังโหลด...</div>';
+
+  // โหลดข้อมูลทั้งหมดพร้อมกันเลยค่ะ
+  try {
+    const [champSettings, champPick, top4SettingsData, top4PickData, groupSettingsData, groupPicksData] = await Promise.all([
+      api({ action: 'getChampionLeaderboard' }),
+      api({ action: 'getChampionPick', username: user }),
+      api({ action: 'getTop4Settings' }),
+      api({ action: 'getTop4Pick', username: user }),
+      api({ action: 'getGroupSettings' }),
+      api({ action: 'getGroupPicks', username: user })
+    ]);
+    championPick = champPick && champPick.team ? champPick : null;
+    top4Settings = top4SettingsData || { result: [], open: false };
+    myTop4Pick = top4PickData || { teams: [] };
+    groupSettings = groupSettingsData;
+    myGroupPicks = groupPicksData;
+  } catch(e) {
+    el.innerHTML = '<div class="empty">โหลดไม่สำเร็จ กรุณาลองใหม่</div>';
+    return;
+  }
+
+  const now = new Date();
+
+  // ===== ส่วนที่ 1: ทายแชมป์ =====
+  const isChampOpen = now < CHAMPION_DEADLINE;
+  const FINAL_DEADLINE = new Date('2026-07-19T00:00:00+07:00');
+  const hasChangeCard = myCards.some(c => c.card_type === 'champion_change' && !c.used);
+  const canUseChangeCard = !isChampOpen && now < FINAL_DEADLINE && hasChangeCard;
+  const champDeadline = CHAMPION_DEADLINE.toLocaleString('th-TH', { timeZone: 'Asia/Bangkok', day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+
+  let html = `<div class="card">
+    <div style="font-size:15px;font-weight:500;margin-bottom:4px;">🏆 ทายแชมป์บอลโลก 2026</div>
+    <div style="font-size:12px;color:#888;margin-bottom:10px;">⏰ ทายได้ถึง ${champDeadline} น. (วันสุดท้ายรอบแบ่งกลุ่ม) • ถูก +30 แต้ม</div>`;
+
+  if (championPick) {
+    html += `<div style="background:#e8f5e9;border-radius:8px;padding:10px;text-align:center;margin-bottom:10px;">
+      <div style="font-size:12px;color:#888;">ทายไว้</div>
+      <div style="font-size:18px;font-weight:600;color:#2e7d32;">🏆 ${championPick.team}</div>
+    </div>`;
+  }
+
+  if (isChampOpen || canUseChangeCard) {
+    html += `<select id="champion-select" style="margin-bottom:10px;">
+      <option value="">-- เลือกทีมแชมป์ --</option>
+      ${ALL_TEAMS.map(t => `<option value="${t}" ${championPick&&championPick.team===t?'selected':''}>${t}</option>`).join('')}
+    </select>`;
+    if (canUseChangeCard) {
+      html += `<div style="background:#fff3e0;border-radius:8px;padding:8px 12px;margin-bottom:10px;font-size:12px;color:#e65100;">
+        🔄 ใช้การ์ด Champion Change เพื่อเปลี่ยนได้ค่ะ</div>`;
+    }
+    html += `<button class="btn primary" id="btn-save-champion" onclick="saveChampion(${canUseChangeCard})">
+      ${championPick ? '🔄 เปลี่ยนการทาย' : '🏆 บันทึกการทายแชมป์'}
+    </button>
+    <div id="champion-err" class="err" style="display:none;"></div>`;
+  } else {
+    html += `<div style="text-align:center;color:#e53935;font-size:13px;padding:4px 0;">⏰ หมดเวลาทายแชมป์แล้วค่ะ</div>`;
+  }
+  html += `</div>`;
+
+  // ===== ส่วนที่ 2: ทาย Top 4 =====
+  const isTop4Open = top4Settings.open && now < TOP4_DEADLINE;
+  const hasTop4Result = top4Settings.result && top4Settings.result.length > 0;
+  const myTeams = myTop4Pick.teams || [];
+  const correctCount = hasTop4Result ? myTeams.filter(t => top4Settings.result.includes(t)).length : 0;
+  const top4Deadline = TOP4_DEADLINE.toLocaleString('th-TH', { timeZone: 'Asia/Bangkok', day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+
+  html += `<div class="card">
+    <div style="font-size:15px;font-weight:500;margin-bottom:4px;">🏅 ทาย Top 4</div>
+    <div style="font-size:12px;color:#888;margin-bottom:10px;">⏰ ทายได้ถึง ${top4Deadline} น. (หลังจบรอบแบ่งกลุ่ม) • ถูกทีมละ +10 แต้ม</div>`;
+
+  if (hasTop4Result) {
+    html += `<div style="margin-bottom:10px;">
+      <div style="font-size:12px;color:#888;margin-bottom:4px;">ผล Top 4 จริงค่ะ:</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;">
+        ${top4Settings.result.map(t => `<span style="background:#e3f2fd;color:#1565c0;padding:3px 8px;border-radius:6px;font-size:12px;">🏅 ${t}</span>`).join('')}
+      </div></div>`;
+  }
+
+  if (myTeams.length > 0) {
+    html += `<div style="margin-bottom:10px;">
+      <div style="font-size:12px;color:#888;margin-bottom:4px;">ทายไว้ ${myTeams.length}/4 ทีมค่ะ${hasTop4Result ? ` • ถูก ${correctCount} ทีม (+${correctCount*10} แต้ม)` : ''}:</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;">
+        ${myTeams.map(t => {
+          const ok = hasTop4Result && top4Settings.result.includes(t);
+          const no = hasTop4Result && !top4Settings.result.includes(t);
+          return `<span style="background:${ok?'#e8f5e9':no?'#ffebee':'#f5f5f5'};color:${ok?'#2e7d32':no?'#c62828':'#333'};padding:3px 8px;border-radius:6px;font-size:12px;">
+            ${ok?'✅ ':no?'❌ ':''}${t}
+            ${isTop4Open?`<span onclick="removeTop4Team('${t}')" style="cursor:pointer;margin-left:4px;color:#aaa;">×</span>`:''}
+          </span>`;
+        }).join('')}
+      </div></div>`;
+  }
+
+  if (isTop4Open && myTeams.length < 4) {
+    html += `<div class="label">เลือกทีม (เหลือ ${4-myTeams.length} ทีม)</div>
+    <select id="top4-select" style="margin-bottom:10px;">
+      <option value="">-- เลือกทีม --</option>
+      ${ALL_TEAMS.filter(t => !myTeams.includes(t)).map(t => `<option value="${t}">${t}</option>`).join('')}
+    </select>
+    <button class="btn primary" onclick="addTop4Team()">+ เพิ่มทีม</button>
+    <div id="top4-err" class="err" style="display:none;"></div>`;
+  } else if (isTop4Open && myTeams.length >= 4) {
+    html += `<div style="text-align:center;color:#2e7d32;font-size:13px;">✅ เลือกครบ 4 ทีมแล้วค่ะ</div>`;
+  } else if (!isTop4Open && !hasTop4Result) {
+    html += `<div style="text-align:center;color:#e53935;font-size:13px;">⏰ ยังไม่เปิดทายหรือหมดเวลาแล้วค่ะ</div>`;
+  }
+  html += `</div>`;
+
+  // ===== ส่วนที่ 3: ทายที่ 1 กลุ่ม =====
+  const isGroupDeadlinePassed = now > GROUP_DEADLINE;
+  const groupDeadlineStr = GROUP_DEADLINE.toLocaleString('th-TH', { timeZone: 'Asia/Bangkok', day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+
+  html += `<div class="card">
+    <div style="font-size:15px;font-weight:500;margin-bottom:4px;">🥇 ทายที่ 1 ของแต่ละกลุ่ม</div>
+    <div style="font-size:12px;color:#888;margin-bottom:12px;">⏰ ทายได้ถึง ${groupDeadlineStr} น. (นัดแรกครบทุกกลุ่ม) • ถูกกลุ่มละ +5 แต้ม • 12 กลุ่ม</div>`;
+
+  Object.keys(GROUP_TEAMS).forEach(group => {
+    const teams = GROUP_TEAMS[group];
+    const setting = groupSettings[group] || { open: false, winner: '' };
+    const myPick = myGroupPicks[group] || '';
+    const hasGroupResult = !!setting.winner;
+    const correct = hasGroupResult && myPick === setting.winner;
+    const wrong = hasGroupResult && myPick && myPick !== setting.winner;
+
+    html += `<div style="padding:10px 0;border-bottom:1px solid #f0f0f0;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+        <span style="font-weight:500;font-size:14px;">${group}</span>
+        ${hasGroupResult ? `<span class="badge badge-done">🥇 ${setting.winner}</span>`
+          : setting.open ? `<span class="badge badge-open">เปิดทาย</span>`
+          : `<span class="badge badge-closed">ปิดทาย</span>`}
+      </div>`;
+
+    if (myPick) {
+      html += `<div style="font-size:12px;padding:4px 8px;border-radius:6px;display:inline-block;margin-bottom:6px;
+        background:${correct?'#e8f5e9':wrong?'#ffebee':'#f8f8f8'};
+        color:${correct?'#2e7d32':wrong?'#c62828':'#555'};">
+        ทายไว้: ${myPick} ${correct?'✅ +5 แต้ม':wrong?'❌':''}
+      </div>`;
+    }
+
+    if (setting.open && !hasGroupResult && !isGroupDeadlinePassed) {
+      html += `<div style="display:flex;gap:4px;flex-wrap:wrap;">
+        ${teams.map(t => `<button class="btn sm ${myPick===t?'primary':''}" 
+          style="flex:1;min-width:calc(50% - 2px);font-size:12px;padding:5px 8px;" 
+          onclick="saveGroupPick('${group}','${t}')">${t}</button>`).join('')}
+      </div>`;
+    } else if (isGroupDeadlinePassed && !hasGroupResult && !myPick) {
+      html += `<div style="font-size:12px;color:#e53935;text-align:center;">⏰ หมดเวลาทายแล้วค่ะ</div>`;
+    }
+    html += `</div>`;
+  });
+  html += `</div>`;
+
+  el.innerHTML = html;
+}
+
+async function renderChampion() { await renderBonus(); }
+async function renderTop4() { await renderBonus(); }
+async function renderGroup() { await renderBonus(); }
+
+
+async function saveChampion(useCard = false) {
+  const team = document.getElementById('champion-select').value;
+  const err = document.getElementById('champion-err');
+  const btn = document.getElementById('btn-save-champion');
+  if (!team) { err.style.display=''; err.textContent='กรุณาเลือกทีมค่ะ'; return; }
+  if (useCard && !confirm(`ใช้การ์ด 🔄 Champion Change เพื่อเปลี่ยนเป็น ${team} ใช่ไหมคะ?`)) return;
+  btn.textContent = '⏳ กำลังบันทึก...'; btn.disabled = true;
+  try {
+    const result = await apiPost({ action: 'saveChampionPick', username: user, team, use_card: useCard });
+    if (!result.success) { err.style.display=''; err.textContent=result.message || 'บันทึกไม่สำเร็จ'; btn.textContent='🏆 บันทึกการทายแชมป์'; btn.disabled=false; return; }
+    championPick = { team };
+    if (useCard) myCards = await api({ action: 'getCards', username: user });
+    renderChampion();
+  } catch(e) { err.style.display=''; err.textContent='เชื่อมต่อไม่สำเร็จ'; btn.textContent='🏆 บันทึกการทายแชมป์'; btn.disabled=false; }
+}
+
+function getAvailableCards() {
+  return myCards.filter(c => !c.used);
+}
+
+function getCardLabel(type) {
+  const labels = { 
+    'double': '⚡ Double (x2)', 
+    'triple': '🔮 Triple (x3)', 
+    'shield': '🛡️ Shield (ป้องกัน)',
+    'champion_change': '🔄 Champion Change'
+  };
+  return labels[type] || type;
 }
 
 async function renderLeaderboard() {
@@ -660,6 +1058,117 @@ async function adminDelete(id) {
   await apiPost({ action: 'deleteMatch', id });
   matches = await api({ action: 'getMatches' });
   renderAdminList();
+}
+
+async function adminAddCard() {
+  const username = document.getElementById('card-username').value.trim();
+  const cardType = document.getElementById('card-type').value;
+  const err = document.getElementById('card-err');
+  if (!username) { err.style.display=''; err.textContent='กรุณาใส่ Username ค่ะ'; return; }
+  err.style.display = 'none';
+  try {
+    await apiPost({ action: 'addCard', username, card_type: cardType });
+    document.getElementById('card-username').value = '';
+    alert(`เพิ่มการ์ด ${getCardLabel(cardType)} ให้ ${username} สำเร็จค่ะ ✅`);
+  } catch(e) { err.style.display=''; err.textContent='เพิ่มการ์ดไม่สำเร็จค่ะ'; }
+}
+
+async function adminSetChampion() {
+  const champion = document.getElementById('champion-result-select').value;
+  const err = document.getElementById('champion-admin-err');
+  if (!champion) { err.style.display=''; err.textContent='กรุณาเลือกทีมแชมป์ค่ะ'; return; }
+  if (!confirm(`บันทึก ${champion} เป็นแชมป์บอลโลก 2026?\nผู้ที่ทายถูกจะได้ +5 แต้มทันทีค่ะ`)) return;
+  err.style.display = 'none';
+  try {
+    await apiPost({ action: 'setChampionResult', champion });
+    alert(`บันทึกผลแชมป์ ${champion} สำเร็จค่ะ ✅`);
+  } catch(e) { err.style.display=''; err.textContent='บันทึกไม่สำเร็จค่ะ'; }
+}
+
+let adminTop4Selected = [];
+
+async function adminTop4Toggle(open) {
+  const err = document.getElementById('top4-admin-err');
+  try {
+    await apiPost({ action: 'updateTop4Settings', open, result: adminTop4Selected });
+    alert(`${open ? 'เปิด' : 'ปิด'}ทาย Top 4 สำเร็จค่ะ ✅`);
+  } catch(e) { err.style.display=''; err.textContent='ไม่สำเร็จค่ะ'; }
+}
+
+async function adminSaveTop4Result() {
+  const err = document.getElementById('top4-admin-err');
+  if (adminTop4Selected.length === 0) { err.style.display=''; err.textContent='กรุณาเลือกทีมอย่างน้อย 1 ทีมค่ะ'; return; }
+  if (!confirm(`บันทึก Top 4: ${adminTop4Selected.join(', ')}?\nผู้ที่ทายถูกได้ +10 แต้มต่อทีมค่ะ`)) return;
+  err.style.display = 'none';
+  try {
+    await apiPost({ action: 'updateTop4Settings', result: adminTop4Selected, open: false });
+    alert(`บันทึกผล Top 4 สำเร็จค่ะ ✅`);
+  } catch(e) { err.style.display=''; err.textContent='ไม่สำเร็จค่ะ'; }
+}
+
+function adminAddTop4Team() {
+  const sel = document.getElementById('admin-top4-select');
+  const team = sel.value;
+  if (!team || adminTop4Selected.includes(team)) return;
+  if (adminTop4Selected.length >= 4) { alert('เลือกได้สูงสุด 4 ทีมค่ะ'); return; }
+  adminTop4Selected.push(team);
+  renderAdminTop4Selected();
+  sel.value = '';
+}
+
+function removeAdminTop4Team(team) {
+  adminTop4Selected = adminTop4Selected.filter(t => t !== team);
+  renderAdminTop4Selected();
+}
+
+function renderAdminTop4Selected() {
+  const el = document.getElementById('admin-top4-result');
+  el.innerHTML = adminTop4Selected.map(t =>
+    `<span style="background:#e3f2fd;color:#1565c0;padding:4px 10px;border-radius:6px;font-size:13px;">
+      ${t} <span onclick="removeAdminTop4Team('${t}')" style="cursor:pointer;margin-left:4px;">×</span>
+    </span>`).join('');
+}
+
+function initAdminTop4Select() {
+  const sel = document.getElementById('admin-top4-select');
+  if (!sel || sel.options.length > 1) return;
+  ALL_TEAMS.forEach(t => { sel.innerHTML += `<option value="${t}">${t}</option>`; });
+  sel.onchange = adminAddTop4Team;
+}
+
+function updateAdminGroupTeams() {
+  const group = document.getElementById('admin-group-select').value;
+  const sel = document.getElementById('admin-group-winner');
+  sel.innerHTML = '<option value="">-- เลือกทีม --</option>';
+  if (group && GROUP_TEAMS[group]) {
+    GROUP_TEAMS[group].forEach(t => {
+      sel.innerHTML += `<option value="${t}">${t}</option>`;
+    });
+  }
+}
+
+async function adminGroupToggle(open) {
+  const group = document.getElementById('admin-group-select').value;
+  const err = document.getElementById('group-admin-err');
+  if (!group) { err.style.display=''; err.textContent='กรุณาเลือกกลุ่มก่อนค่ะ'; return; }
+  err.style.display = 'none';
+  try {
+    await apiPost({ action: 'updateGroupSetting', group, open });
+    alert(`${open ? 'เปิด' : 'ปิด'}ทาย ${group} สำเร็จค่ะ ✅`);
+  } catch(e) { err.style.display=''; err.textContent='ไม่สำเร็จค่ะ'; }
+}
+
+async function adminSetGroupWinner() {
+  const group = document.getElementById('admin-group-select').value;
+  const winner = document.getElementById('admin-group-winner').value;
+  const err = document.getElementById('group-admin-err');
+  if (!group || !winner) { err.style.display=''; err.textContent='กรุณาเลือกกลุ่มและทีมค่ะ'; return; }
+  if (!confirm(`บันทึก ${winner} เป็นที่ 1 ของ ${group}?\nผู้ที่ทายถูกได้ +5 แต้มค่ะ`)) return;
+  err.style.display = 'none';
+  try {
+    await apiPost({ action: 'updateGroupSetting', group, winner, open: false });
+    alert(`บันทึกผล ${group}: ${winner} สำเร็จค่ะ ✅`);
+  } catch(e) { err.style.display=''; err.textContent='ไม่สำเร็จค่ะ'; }
 }
 
 function renderAdminList() {
